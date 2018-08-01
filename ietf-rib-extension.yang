@@ -24,22 +24,40 @@ module ietf-rib-extension {
   }
 
   organization
-    "Cisco Systems
-     170 West Tasman Drive
-     San Jose, CA 95134-1706
-     USA";
+      "IETF RTGWG - Routing Working Group";
+
   contact
-    "Acee Lindem - acee@cisco.com
-     Yingzhen QU - yiqu@cisco.com";
+    "WG Web:   <http://datatracker.ietf.org/group/rtgwg/>
+     WG List:  <mailto:rtgwg@ietf.org>
+
+     Author:   Acee Lindem
+               <mailto:acee@cisco.com>
+     Author:   Yingzhen Qu
+               <mailto:yingzhen.qu@huawei.com>";
 
   description
     "This YANG module extends the generic data model for
      RIB by augmenting the ietf-netmod-routing-cfg
      model. It is intended that the module will be extended
      by vendors to define vendor-specific RIB parameters.
-    ";
 
-  revision 2017-10-16 {
+     This YANG model conforms to the Network Management
+     Datastore Architecture (NDMA) as described in RFC 8242.
+
+     Copyright (c) 2018 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject
+     to the license terms contained in, the Simplified BSD License
+     set forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (http://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC XXXX;
+     see the RFC itself for full legal notices.";
+
+  revision 2018-08-01 {
     description
       "Initial RFC Version";
     reference
@@ -47,6 +65,54 @@ module ietf-rib-extension {
   }
 
   /* Groupings */
+  grouping rib-statistics {
+    description "Statistics grouping used for RIB augmentation";
+    container rib-summary-statistics {
+      config false;
+      description "Container for RIB statistics";
+      leaf total-routes {
+        type uint32;
+        description
+          "Total routes in the RIB from all protocols";
+      }
+      leaf total-active-routes {
+        type uint32;
+        description
+          "Total active routes in the RIB";
+      }
+      leaf total-route-memory {
+        type uint64;
+        description
+          "Total memory for all routes in the RIB from all
+           protocol clients";
+      }
+      list protocol-rib-statistics {
+        description "List protocol statistics";
+        leaf rib-protocol {
+          type identityref {
+            base rt:routing-protocol;
+          }
+          description "Routing protocol for statistics";
+        }
+        leaf protocol-total-routes {
+          type uint32;
+          description
+            "Total number routes for protocol in the RIB";
+        }
+        leaf protocol-active-routes {
+          type uint32;
+          description
+            "Number active routes for protocol in the RIB";
+        }
+        leaf protocol-route-memory {
+          type uint64;
+          description
+            "Total memory for all routes in the RIB for protocol";
+        }
+      }
+    }
+  }
+
   grouping next-hop {
     description
       "Next-hop grouping";
@@ -73,6 +139,10 @@ module ietf-rib-extension {
       type uint32;
       description "Route tag";
     }
+    leaf application-tag {
+      type uint32;
+      description "Additional Application-Specific Route tag";
+    }
   }
   grouping path-attribute {
     description
@@ -83,7 +153,7 @@ module ietf-rib-extension {
              + "rt:routes/repair-route/id";
       }
       description
-        "IP Fast ReRoute (IPFRR) repair path, use a path 
+        "IP Fast ReRoute (IPFRR) repair path, use a path
          from repair-route list";
     }
   }
@@ -100,13 +170,17 @@ module ietf-rib-extension {
       default "1";
       description "Route preference - Used to select among multiple
                   static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding 
+                  preferred and equal preference paths yielding
                   Equal Cost Multi-Path (ECMP).";
     }
     leaf tag {
       type uint32;
       default "0";
       description "Route tag";
+    }
+    leaf application-tag {
+      type uint32;
+      description "Additional Application-Specific Route tag";
     }
   }
 
@@ -123,7 +197,7 @@ module ietf-rib-extension {
       default "1";
       description "Route preference - Used to select among multiple
                   static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding 
+                  preferred and equal preference paths yielding
                   Equal Cost Multi-Path (ECMP).";
     }
     leaf tag {
@@ -131,7 +205,11 @@ module ietf-rib-extension {
       default "0";
       description "Route tag";
     }
-  }
+    leaf application-tag {
+      type uint32;
+      description "Additional Application-Specific Route tag";
+    }
+}
 
   augment "/rt:routing/rt:control-plane-protocols/"
         + "rt:control-plane-protocol/rt:static-routes/v6ur:ipv6/"
@@ -145,7 +223,7 @@ module ietf-rib-extension {
       default "1";
       description "Route preference - Used to select among multiple
                   static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding 
+                  preferred and equal preference paths yielding
                   Equal Cost Multi-Path (ECMP).";
     }
     leaf tag {
@@ -153,7 +231,11 @@ module ietf-rib-extension {
       default "0";
       description "Route tag";
     }
-  }
+    leaf application-tag {
+      type uint32;
+      description "Additional Application-Specific Route tag";
+    }
+}
 
   augment "/rt:routing/rt:control-plane-protocols/"
         + "rt:control-plane-protocol/rt:static-routes/v6ur:ipv6/"
@@ -168,7 +250,7 @@ module ietf-rib-extension {
       default "1";
       description "Route preference - Used to select among multiple
                   static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding 
+                  preferred and equal preference paths yielding
                   Equal Cost Multi-Path (ECMP).";
     }
     leaf tag {
@@ -176,6 +258,16 @@ module ietf-rib-extension {
       default "0";
       description "Route tag";
     }
+    leaf application-tag {
+      type uint32;
+      description "Additional Application-Specific Route tag";
+    }
+  }
+
+  augment "/rt:routing/rt:ribs/rt:rib"
+  {
+    description "Augment a RIB with statistics";
+    uses rib-statistics;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -194,7 +286,7 @@ module ietf-rib-extension {
     list repair-route {
       key "id";
       description
-        "A repair-path entry, which can be referenced 
+        "A repair-path entry, which can be referenced
          by a repair-path.";
       leaf id {
         type string;
