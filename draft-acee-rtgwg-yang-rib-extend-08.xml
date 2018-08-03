@@ -2,6 +2,8 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
     <!ENTITY RFC2119 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY RFC3688 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'>
     <!ENTITY RFC5246 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml'>
     <!ENTITY RFC6020 PUBLIC '' 
@@ -10,12 +12,22 @@
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6241.xml'>
     <!ENTITY RFC6242 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6242.xml'>
-    <!ENTITY RFC6536 PUBLIC '' 
-      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6536.xml'>
+    <!ENTITY RFC6991 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6991.xml'>
+    <!ENTITY RFC7950 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7950.xml'>
     <!ENTITY RFC8040 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8040.xml'>
     <!ENTITY RFC8174 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml'>
+    <!ENTITY RFC8340 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8340.xml'>
+    <!ENTITY RFC8341 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8341.xml'> 
+    <!ENTITY RFC8342 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8342.xml'> 
+    <!ENTITY RFC8343 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8343.xml'> 
     <!ENTITY RFC8349 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8349.xml'>
     ]>
@@ -28,7 +40,7 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-acee-rtgwg-yang-rib-extend-07.txt" >
+<rfc category="std" ipr="trust200902" docName="draft-acee-rtgwg-yang-rib-extend-08.txt" >
 
 <front>
 <title abbrev="YANG RIB">RIB YANG Data Model</title> 
@@ -63,7 +75,7 @@
      <t>The Routing Information Base (RIB) is a list of routes and their 
         corresponding administrative data and operational state.</t>
 
-     <t>The document <xref target="RFC8349"/> defines the 
+     <t>RFC 8349 defines the 
      basic building blocks for RIB, and this model augments it to support 
      multiple next-hops (aka, paths) for each route as well as additional
      attributes.</t> 
@@ -83,13 +95,72 @@ by comparing the route preference (aka, administrative distance) of
 the associated protocol.</t>
 <t>The augmentations described herein extend the RIB to support 
 multiple paths per route, route metrics, and administrative tags.</t>
-     <section title="Requirements Language">
-       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-        NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
-        "MAY", and "OPTIONAL" in this document are to be interpreted as
-        described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> 
-        when, and only when, they appear in all capitals, as shown here.</t>
-     </section>
+<t> The YANG modules in this document conform to the Network Management
+Datastore Architecture (NMDA) [RFC8342].</t>
+</section>
+
+<section title="Terminology and Notation">
+  <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+     NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+     "MAY", and "OPTIONAL" in this document are to be interpreted as
+     described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> 
+     when, and only when, they appear in all capitals, as shown here.</t>
+  <t>The following terms are defined in <xref target="RFC8342"/>:
+    <list style="symbols">
+        <t>client</t>
+        <t>server</t>
+        <t>configuration</t>
+        <t>system state</t>
+        <t>operational state</t>
+        <t>intended configuration</t>
+      </list></t>
+
+      <t>The following terms are defined in <xref target="RFC7950"/>:
+      <list style="symbols">
+  <t>action</t>
+        <t>augment</t>
+        <t>container</t>
+        <t>container with presence</t>
+        <t>data model</t>
+        <t>data node</t>
+        <t>feature</t>
+        <t>leaf</t>
+        <t>list</t>
+        <t>mandatory node</t>
+        <t>module</t>
+        <t>schema tree</t>
+        <t>RPC (Remote Procedure Call) operation</t>
+      </list></t>
+  <section title="Glossary of New Terms">
+    <t><list style="">
+      <t>Routing Information Base (RIB):  An object containing a list of
+      routes, together with other information.  See <xref target="RFC8349"/> Section 5.2 for
+      details.</t>
+    </list></t>
+  </section>
+  <section title="Tree Diagrams">
+    <t>Tree diagrams used in this document follow the notation defined in  <xref target="RFC8340"/>.</t>
+  </section>
+  <section anchor="sec.prefixes" title="Prefixes in Data Node Names">
+      <t>In this document, names of data nodes, actions, and other
+        data model objects are often used without a prefix, as long as
+        it is clear from the context in which YANG module each name is
+        defined. Otherwise, names are prefixed using the standard prefix
+        associated with the corresponding YANG module, as shown in <xref target="tab.prefixes"/>.</t>
+
+        <texttable anchor="tab.prefixes" title="Prefixes and Corresponding YANG Modules">
+          <ttcol>Prefix</ttcol>
+          <ttcol>YANG module</ttcol>
+          <ttcol>Reference</ttcol>
+          <c>if</c><c>ietf-interfaces</c><c><xref target="RFC8343"/></c>
+          <c>rt</c><c>ietf-routing</c><c><xref target="RFC8349"/></c>
+          <c>v4ur</c><c>ietf-ipv4-unicast-routing</c>
+          <c><xref target="RFC8349"/></c>
+          <c>v6ur</c><c>ietf-ipv6-unicast-routing</c>
+          <c><xref target="RFC8349"/></c>
+          <c>inet</c><c>ietf-inet-types</c><c><xref target="RFC6991"/></c>
+        </texttable>
+      </section>
 </section>
 
 <section title="Design of the Model">
@@ -216,9 +287,10 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
 <artwork><![CDATA[
 <CODE BEGINS> file "ietf-rib-extension@2018-08-01.yang" 
 module ietf-rib-extension {
+  yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
 
-  prefix rib;
+  prefix rib-ext;
 
   import ietf-inet-types {
     prefix "inet";
@@ -574,7 +646,7 @@ module ietf-rib-extension {
        <xref target="RFC6242"/>. The lowest RESTCONF layer is HTTPS, and the
        mandatory-to-implement secure transport is TLS <xref target="RFC5246"/>.</t>
 
-   <t>The NETCONF access control model <xref target="RFC6536"/> provides the 
+   <t>The NETCONF access control model <xref target="RFC8341"/> provides the 
       means to restrict access for particular NETCONF or RESTCONF users to a
       pre-configured subset of all available NETCONF or RESTCONF protocol 
       operations and content.</t>
@@ -601,16 +673,16 @@ module ietf-rib-extension {
 
 <section title="IANA Considerations">
 <t> This document registers a URI in the IETF XML registry 
-   <xref target="XML-REGISTRY"/>.  Following the format in RFC 3688, the following
+   <xref target="XML-REGISTRY"/>.  Following the format in <xref target="RFC3688"/>, the following
    registration is requested to be made:
    <list>
-   <t>URI: urn:ietf:params:xml:ns:yang:ietf-rib</t>
+   <t>URI: urn:ietf:params:xml:ns:yang:ietf-rib-extension</t>
    <t> Registrant Contact: The IESG.</t>
    <t> XML: N/A, the requested URI is an XML namespace.</t>
    <t>This document registers a YANG module in the YANG Module Names
    registry <xref target="RFC6020"/>.</t>
-   <t>name: ietf-acl namespace: urn:ietf:params:xml:ns:yang:ietf-rib
-     prefix: ietf-rib reference: RFC XXXX</t>
+   <t>name: ietf-acl namespace: urn:ietf:params:xml:ns:yang:ietf-rib-extension
+     prefix: ietf-rib-ext reference: RFC XXXX</t>
   </list></t>
 </section>
 
@@ -620,13 +692,18 @@ module ietf-rib-extension {
 <back>
 <references title="Normative References">
 &RFC2119;
+&RFC3688;
 &RFC5246;
 &RFC6020;
 &RFC6241;
 &RFC6242;
-&RFC6536;
+&RFC6991;
+&RFC7950;
 &RFC8040;
 &RFC8174;
+&RFC8341;
+&RFC8342;
+&RFC8343;
 &RFC8349;
 </references>
 
@@ -640,8 +717,8 @@ module ietf-rib-extension {
 <date month="January" year="2004" />
 </front>
 <seriesInfo name="BCP" value="81" />
-<seriesInfo name="RFC" value="3688" />
 </reference>
+&RFC8340;
 </references>
 
 <?rfc needLines="100"?>
