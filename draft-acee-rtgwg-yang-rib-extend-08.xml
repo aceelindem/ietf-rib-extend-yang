@@ -285,7 +285,7 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
 <section title="RIB YANG Model">
 <figure>
 <artwork><![CDATA[
-<CODE BEGINS> file "ietf-rib-extension@2018-08-01.yang" 
+<CODE BEGINS> file "ietf-rib-extension@2018-08-16.yang" 
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -726,6 +726,7 @@ module ietf-rib-extension {
   <t>The RFC text was produced using Marshall Rose's xml2rfc tool.</t>
   <t>The authors wish to thank Les Ginsberg, Krishna Deevi and Suyoung Yoon
 for their helpful comments and suggestions.</t>
+  <t>The authors wish to thank Tom Petch for review and commands.</t>
 </section>
 </back>
 
