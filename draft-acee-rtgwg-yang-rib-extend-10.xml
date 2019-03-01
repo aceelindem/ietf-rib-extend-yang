@@ -40,7 +40,7 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-acee-rtgwg-yang-rib-extend-09.txt" >
+<rfc category="std" ipr="trust200902" docName="draft-acee-rtgwg-yang-rib-extend-10.txt" >
 
 <front>
 <title abbrev="YANG RIB">RIB YANG Data Model</title> 
@@ -84,9 +84,9 @@
 
 <middle>
 <section title="Introduction">
-  <t>This document defines a YANG, <xref target="RFC6020"/>, data model which extends
-  the generic data model for RIB by augmenting the ietf-routing model as 
-  defined in <xref target="RFC8349"/>.</t>
+  <t>This document defines a YANG, <xref target="RFC6020"/><xref target="RFC7950"/>, 
+  data model which extends the generic data model for RIB by augmenting the 
+  ietf-routing model as defined in <xref target="RFC8349"/>.</t>
 
 <t>RIB is a collection of best routes from all routing protocols. Within a protocol
 routes are selected based on the metrics in use by that protocol, and
@@ -317,7 +317,7 @@ module ietf-rib-extension {
      by vendors to define vendor-specific RIB parameters.
 
      This YANG model conforms to the Network Management
-     Datastore Architecture (NDMA) as described in RFC 8242.
+     Datastore Architecture (NDMA) as described in RFC 8342.
 
      Copyright (c) 2018 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.

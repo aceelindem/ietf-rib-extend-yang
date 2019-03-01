@@ -58,7 +58,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2018-08-16 {
+  revision 2019-03-01 {
     description
       "Initial RFC Version";
     reference
