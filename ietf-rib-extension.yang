@@ -34,7 +34,7 @@ module ietf-rib-extension {
      Author:   Acee Lindem
                <mailto:acee@cisco.com>
      Author:   Yingzhen Qu
-               <mailto:yingzhen.qu@huawei.com>";
+               <mailto:yingzhen.qu@futurewei.com>";
 
   description
     "This YANG module extends the generic data model for
@@ -58,7 +58,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2019-03-11 {
+  revision 2020-03-07 {
     description
       "Initial RFC Version";
     reference
