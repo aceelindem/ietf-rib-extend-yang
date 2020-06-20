@@ -58,7 +58,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2020-03-07 {
+  revision 2020-06-19 {
     description
       "Initial RFC Version";
     reference
@@ -152,7 +152,7 @@ module ietf-rib-extension {
                    explicitly.";
     }
   }
-  grouping path-attribute {
+  grouping repair-path-attribute {
     description
       "Path attribute grouping";
     leaf repair-path {
@@ -315,7 +315,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses path-attribute;
+    uses repair-path-attribute;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -324,7 +324,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses path-attribute;
+    uses repair-path-attribute;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -334,6 +334,6 @@ module ietf-rib-extension {
     description
       "This case augments the 'next-hop-options' in the routing
        model.";
-    uses path-attribute;
+    uses repair-path-attribute;
   }
 }

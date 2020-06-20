@@ -42,7 +42,7 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-03" >
+<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-04" >
 
 <front>
 <title abbrev="YANG RIB">RIB YANG Data Model</title> 
@@ -170,7 +170,7 @@ Datastore Architecture (NMDA) [RFC8342].</t>
 defined in <xref target="RFC8349"/>, which provides a basis
 for routing system data model development. Together with modules defined in
 <xref target="RFC8349"/>, a generic RIB Yang model is defined to
-implement and monitor RIB.</t>
+implement and monitor a RIB.</t>
 <t>The models in <xref target="RFC8349"/> also define the basic
   configuration and operational state for both IPv4 and IPv6 static routes and this document
   also provides  augmentations for static routes to support multiple next-hop 
@@ -274,7 +274,7 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
 <section title="RIB YANG Model">
 <figure>
 <artwork><![CDATA[
-<CODE BEGINS> file "ietf-rib-extension@2020-03-07.yang"
+<CODE BEGINS> file "ietf-rib-extension@2020-06-19.yang"
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -335,7 +335,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2020-03-07 {
+  revision 2020-06-19 {
     description
       "Initial RFC Version";
     reference
@@ -429,7 +429,7 @@ module ietf-rib-extension {
                    explicitly.";
     }
   }
-  grouping path-attribute {
+  grouping repair-path-attribute {
     description
       "Path attribute grouping";
     leaf repair-path {
@@ -592,7 +592,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses path-attribute;
+    uses repair-path-attribute;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -601,7 +601,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses path-attribute;
+    uses repair-path-attribute;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -611,7 +611,7 @@ module ietf-rib-extension {
     description
       "This case augments the 'next-hop-options' in the routing
        model.";
-    uses path-attribute;
+    uses repair-path-attribute;
   }
 }
 <CODE ENDS>
@@ -872,8 +872,90 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rt:next-hop
 </artwork> 
 </figure>
 </section>
-<section anchor="examples" title="ietf-rib-extension.yang examples">
-<t>Examples will be added in a future version of this document.</t>
+<section anchor="examples" title="ietf-rib-extension.yang example">
+<t>The following is an XML example using the RIB extension module 
+  and RFC 8349.</t>
+  <figure>
+  <artwork><![CDATA[
+<routing
+ xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
+  <control-plane-protocols>
+    <control-plane-protocol>
+      <type>static</type>
+      <name>static-routing-protocol</name>
+      <static-routes>
+        <ipv4 
+          xmlns="urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+          <route>
+            <destination-prefix>0.0.0.0/0</destination-prefix>
+            <next-hop>
+              <next-hop-address>192.0.2.2</next-hop-address>
+              <preference 
+                xmlns="urn:ietf:params:xml:ns:yang:ietf-rib-extension">
+                30</preference>
+              <tag 
+                xmlns="urn:ietf:params:xml:ns:yang:ietf-rib-extension">
+                99</tag>
+            </next-hop>
+          </route>
+        </ipv4>
+      </static-routes>
+    </control-plane-protocol>
+  </control-plane-protocols>
+  <ribs>
+    <rib>
+      <name>ipv4-master</name>
+      <address-family xmlns:v4ur=
+        "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+        v4ur:ipv4-unicast</address-family>
+      <default-rib>true</default-rib>
+      <routes>
+        <repair-route xmlns=
+          "urn:ietf:params:xml:ns:yang:ietf-rib-extension">
+          <id>1</id>
+          <next-hop>
+            <next-hop-address>10.0.0.1</next-hop-address>
+          </next-hop>
+          <metric>200</metric>
+        </repair-route>
+        <route>
+          <destination-prefix xmlns=
+            "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+            0.0.0.0/0</destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns=
+              "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+              192.0.2.2</next-hop-address>
+          </next-hop>
+          <route-preference>5</route-preference>
+          <source-protocol>static</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+        <route>
+          <destination-prefix xmlns=
+            "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+            192.1.1.0/24</destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns=
+              "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+              192.0.2.2</next-hop-address>
+            <repair-path 
+              xmlns="urn:ietf:params:xml:ns:yang:ietf-rib-extension">
+              1</repair-path>
+          </next-hop>
+          <route-preference>110</route-preference>
+          <source-protocol 
+            xmlns:ospf="urn:ietf:params:xml:ns:yang:ietf-ospf">
+            ospf:ospf</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+      </routes>
+    </rib>
+  </ribs>
+</routing>
+ ]]>
+  </artwork> 
+</figure>
 </section>
 <?rfc needLines="100"?>
 <section title="Acknowledgments">
