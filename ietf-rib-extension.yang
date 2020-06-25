@@ -161,17 +161,28 @@ module ietf-rib-extension {
          application-specific tag is not advertised implicitly.";
     }
   }
-  grouping repair-path-attribute {
-    description
-      "Path attribute grouping";
-    leaf repair-path {
-      type leafref {
-        path "/rt:routing/rt:ribs/rt:rib/"
-          + "rt:routes/repair-route/id";
-      }
+  grouping repair-next-hop {
+    container repair-next-hop {
       description
-        "IP Fast ReRoute (IPFRR) repair path, use a path
-         from repair-route list";
+        "IP Fast Reroute next-hop repair path";
+      leaf outgoing-interface {
+        type if:interface-state-ref;
+        description
+          "Name of the outgoing interface.";
+      }
+      leaf next-hop-address {
+        type inet:ip-address;
+        description
+          "IP address of the next hop.";
+      }
+      leaf metric {
+        type uint32;
+        description
+          "The netric for the repair path. While the IP Fast
+           Reroute re-route repair is local and the metric is
+           not advertised externally, the metric for repair path
+           is useful for troubleshooting purposes.";
+      }
       reference
         "RFC 5714: IP Fast Reroute Framework.";
     }
@@ -227,7 +238,6 @@ module ietf-rib-extension {
         "The tag is a 32-bit opaque value assoicaute with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
-      description "Route tag";
     }
   }
 
@@ -299,49 +309,12 @@ module ietf-rib-extension {
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
-    + "rt:routes"
-  {
-    description
-      "Augment a route with a list of repair-paths.";
-    list repair-route {
-      key "id";
-      description
-        "A repair-path entry, which can be referenced
-         by a repair-path.";
-      leaf id {
-        type string;
-        description
-          "A unique identifier.";
-      }
-
-      container next-hop {
-        description
-          "Route's next-hop attribute.";
-        leaf outgoing-interface {
-          type if:interface-state-ref;
-          description
-            "Name of the outgoing interface.";
-        }
-        leaf next-hop-address {
-          type inet:ip-address;
-          description
-            "IP address of the next hop.";
-        }
-      }
-      leaf metric {
-        type uint32;
-        description "Route metric";
-      }
-    }
-  }
-
-  augment "/rt:routing/rt:ribs/rt:rib/"
     + "rt:routes/rt:route/rt:next-hop/rt:next-hop-options/"
     + "rt:simple-next-hop"
   {
     description
       "Add more parameters to a path.";
-    uses repair-path-attribute;
+    uses repair-next-hop;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -350,7 +323,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses repair-path-attribute;
+    uses repair-next-hop;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -360,6 +333,6 @@ module ietf-rib-extension {
     description
       "This case augments the 'next-hop-options' in the routing
        model.";
-    uses repair-path-attribute;
+    uses repair-next-hop;
   }
 }
