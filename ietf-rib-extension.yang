@@ -146,10 +146,9 @@ module ietf-rib-extension {
     leaf tag {
       type uint32;
       description
-        "The tag is a 32-bit opaque value assoicaute with the 
+        "The tag is a 32-bit opaque value assoicaute with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
-
     }
     leaf application-tag {
       type uint32;
@@ -188,15 +187,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value assoicaute with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
@@ -211,14 +214,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
+      description
+        "The tag is a 32-bit opaque value assoicaute with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
       description "Route tag";
     }
   }
@@ -233,15 +241,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value assoicaute with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
@@ -256,15 +268,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value assoicaute with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
