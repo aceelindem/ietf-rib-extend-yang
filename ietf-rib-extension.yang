@@ -58,7 +58,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2020-06-19 {
+  revision 2020-06-25 {
     description
       "Initial RFC Version";
     reference
@@ -146,7 +146,7 @@ module ietf-rib-extension {
     leaf tag {
       type uint32;
       description
-        "The tag is a 32-bit opaque value assoicaute with the
+        "The tag is a 32-bit opaque value associate with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -178,7 +178,7 @@ module ietf-rib-extension {
       leaf metric {
         type uint32;
         description
-          "The netric for the repair path. While the IP Fast
+          "The metric for the repair path. While the IP Fast
            Reroute re-route repair is local and the metric is
            not advertised externally, the metric for repair path
            is useful for troubleshooting purposes.";
@@ -208,7 +208,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value assoicaute with the
+        "The tag is a 32-bit opaque value associate with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -235,7 +235,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value assoicaute with the
+        "The tag is a 32-bit opaque value associate with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -261,7 +261,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value assoicaute with the
+        "The tag is a 32-bit opaque value associate with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -288,7 +288,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value assoicaute with the
+        "The tag is a 32-bit opaque value associate with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }

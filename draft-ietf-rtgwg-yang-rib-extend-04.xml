@@ -205,68 +205,64 @@ repair path is installed in RIB.</t>
    tree with the augmentations herein is included in <xref target="full-tree"/>.</t>
 <figure>
 <artwork> 
-augment /rt:routing/rt:control-plane-protocols
-         /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
-         /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
-         /v4ur:simple-next-hop:
- +--rw preference?        uint32
- +--rw tag?               uint32
- +--rw application-tag?   uint32
-augment /rt:routing/rt:control-plane-protocols
-         /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
-         /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
-         /v4ur:next-hop-list/v4ur:next-hop-list/v4ur:next-hop:
- +--rw preference?        uint32
- +--rw tag?               uint32
- +--rw application-tag?   uint32
-augment /rt:routing/rt:control-plane-protocols
-         /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
-         /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
-         /v6ur:simple-next-hop:
- +--rw preference?        uint32
- +--rw tag?               uint32
- +--rw application-tag?   uint32
-augment /rt:routing/rt:control-plane-protocols
-         /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
-         /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
-         /v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop:
- +--rw preference?        uint32
- +--rw tag?               uint32
- +--rw application-tag?   uint32
-augment /rt:routing/rt:ribs/rt:rib:
- +--ro rib-summary-statistics
-    +--ro total-routes?              uint32
-    +--ro total-active-routes?       uint32
-    +--ro total-route-memory?        uint64
-    +--ro protocol-rib-statistics* []
-       +--ro rib-protocol?             identityref
-       +--ro protocol-total-routes?    uint32
-       +--ro protocol-active-routes?   uint32
-       +--ro protocol-route-memory?    uint64
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route:
- +--ro metric?            uint32
- +--ro tag?               uint32
- +--ro application-tag?   uint32
-augment /rt:routing/rt:ribs/rt:rib/rt:routes:
- +--ro repair-route* [id]
-    +--ro id          string
-    +--ro next-hop
-    |  +--ro outgoing-interface?   if:interface-state-ref
-    |  +--ro next-hop-address?     inet:ip-address
-    +--ro metric?     uint32
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
-         /rt:next-hop/rt:next-hop-options/rt:simple-next-hop:
- +--ro repair-path?
-         -> /rt:routing/ribs/rib/routes/repair-route/id
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
-         /rt:next-hop/rt:next-hop-options/rt:special-next-hop:
- +--ro repair-path?
-         -> /rt:routing/ribs/rib/routes/repair-route/id
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
-         /rt:next-hop/rt:next-hop-options/rt:next-hop-list
-         /rt:next-hop-list/rt:next-hop:
- +--ro repair-path?
-         -> /rt:routing/ribs/rib/routes/repair-route/id
+module: ietf-rib-extension
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
+          /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
+          /v4ur:simple-next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
+          /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
+          /v4ur:next-hop-list/v4ur:next-hop-list/v4ur:next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
+          /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
+          /v6ur:simple-next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
+          /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
+          /v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:ribs/rt:rib:
+    +--ro rib-summary-statistics
+       +--ro total-routes?              uint32
+       +--ro total-active-routes?       uint32
+       +--ro total-route-memory?        uint64
+       +--ro protocol-rib-statistics* []
+          +--ro rib-protocol?             identityref
+          +--ro protocol-total-routes?    uint32
+          +--ro protocol-active-routes?   uint32
+          +--ro protocol-route-memory?    uint64
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route:
+    +--ro metric?            uint32
+    +--ro tag?               uint32
+    +--ro application-tag?   uint32
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+          /rt:next-hop/rt:next-hop-options/rt:simple-next-hop:
+    +--ro repair-path
+       +--ro outgoing-interface?   if:interface-state-ref
+       +--ro next-hop-address?     inet:ip-address
+       +--ro metric?               uint32
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+          /rt:next-hop/rt:next-hop-options/rt:special-next-hop:
+    +--ro repair-path
+       +--ro outgoing-interface?   if:interface-state-ref
+       +--ro next-hop-address?     inet:ip-address
+       +--ro metric?               uint32
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+          /rt:next-hop/rt:next-hop-options/rt:next-hop-list
+          /rt:next-hop-list/rt:next-hop:
+    +--ro repair-path
+       +--ro outgoing-interface?   if:interface-state-ref
+       +--ro next-hop-address?     inet:ip-address
+       +--ro metric?               uint32
 </artwork> 
 </figure>
 </section> 
@@ -274,7 +270,7 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
 <section title="RIB YANG Model">
 <figure>
 <artwork><![CDATA[
-<CODE BEGINS> file "ietf-rib-extension@2020-06-19.yang"
+<CODE BEGINS> file "ietf-rib-extension@2020-06-25.yang"
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -335,7 +331,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2020-06-19 {
+  revision 2020-06-25 {
     description
       "Initial RFC Version";
     reference
@@ -411,35 +407,55 @@ module ietf-rib-extension {
       "Common attributes applicable to all paths";
     leaf metric {
       type uint32;
-      description "Route metric";
+      description
+        "The metric is a numeric value that indicating the
+         cost of the route from the perspective of the routing
+         protocol installing the route. In general, routes with
+         a lower metric installed by the same routing protocol
+         are lower cost to reach and are preferable to routes
+         with a higher metric. However, metrics from different
+         routing protocols are not directly comparable.";
     }
     leaf tag {
       type uint32;
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value associate with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
     leaf application-tag {
       type uint32;
-      description "Additional Application-Specific Route tag. This
-                   additional tag can be used by applications that
-                   require semantics and policy different from that
-                   of the tag. For example, the tag is usually
-                   automatically advertised in OSPF AS-External
-                   Link State Advertisements (LSAs) while this
-                   application specific tag is not unless done so
-                   explicitly.";
+      description
+        "The application-specific tag is an additional tag that
+         can be used applications that require semantics and/or
+         policy different from that of the tag. For example,
+         the tag is usually automatically advertised in OSPF
+         AS-External Link State Advertisements (LSAs) while this
+         application-specific tag is not advertised implicitly.";
     }
   }
-  grouping repair-path-attribute {
-    description
-      "Path attribute grouping";
-    leaf repair-path {
-      type leafref {
-        path "/rt:routing/rt:ribs/rt:rib/"
-          + "rt:routes/repair-route/id";
-      }
+  grouping repair-path {
+    container repair-path {
       description
-        "IP Fast ReRoute (IPFRR) repair path, use a path
-         from repair-route list";
+        "IP Fast Reroute next-hop repair path";
+      leaf outgoing-interface {
+        type if:interface-state-ref;
+        description
+          "Name of the outgoing interface.";
+      }
+      leaf next-hop-address {
+        type inet:ip-address;
+        description
+          "IP address of the next hop.";
+      }
+      leaf metric {
+        type uint32;
+        description
+          "The metric for the repair path. While the IP Fast
+           Reroute re-route repair is local and the metric is
+           not advertised externally, the metric for repair path
+           is useful for troubleshooting purposes.";
+      }
       reference
         "RFC 5714: IP Fast Reroute Framework.";
     }
@@ -455,15 +471,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value associate with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
@@ -478,15 +498,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value associate with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
@@ -500,15 +524,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value associate with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
@@ -523,15 +551,19 @@ module ietf-rib-extension {
     leaf preference {
       type uint32;
       default "1";
-      description "Route preference - Used to select among multiple
-                  static routes with a lower preference next-hop
-                  preferred and equal preference paths yielding
-                  Equal Cost Multi-Path (ECMP).";
+      description
+        "The preference is used to select among multiple static
+         routes, Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Mult-Path (ECMP) static routes.";
     }
     leaf tag {
       type uint32;
       default "0";
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value associate with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
     }
   }
 
@@ -550,49 +582,12 @@ module ietf-rib-extension {
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
-    + "rt:routes"
-  {
-    description
-      "Augment a route with a list of repair-paths.";
-    list repair-route {
-      key "id";
-      description
-        "A repair-path entry, which can be referenced
-         by a repair-path.";
-      leaf id {
-        type string;
-        description
-          "A unique identifier.";
-      }
-
-      container next-hop {
-        description
-          "Route's next-hop attribute.";
-        leaf outgoing-interface {
-          type if:interface-state-ref;
-          description
-            "Name of the outgoing interface.";
-        }
-        leaf next-hop-address {
-          type inet:ip-address;
-          description
-            "IP address of the next hop.";
-        }
-      }
-      leaf metric {
-        type uint32;
-        description "Route metric";
-      }
-    }
-  }
-
-  augment "/rt:routing/rt:ribs/rt:rib/"
     + "rt:routes/rt:route/rt:next-hop/rt:next-hop-options/"
     + "rt:simple-next-hop"
   {
     description
       "Add more parameters to a path.";
-    uses repair-path-attribute;
+    uses repair-path;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -601,7 +596,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses repair-path-attribute;
+    uses repair-path;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -611,7 +606,7 @@ module ietf-rib-extension {
     description
       "This case augments the 'next-hop-options' in the routing
        model.";
-    uses repair-path-attribute;
+    uses repair-path;
   }
 }
 <CODE ENDS>
