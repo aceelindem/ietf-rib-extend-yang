@@ -134,22 +134,32 @@ module ietf-rib-extension {
       "Common attributes applicable to all paths";
     leaf metric {
       type uint32;
-      description "Route metric";
+      description
+        "The metric is a numeric value that indicating the
+         cost of the route from the perspective of the routing
+         protocol installing the route. In general, routes with
+         a lower metric installed by the same routing protocol
+         are lower cost to reach and are preferable to routes
+         with a higher metric. However, metrics from different
+         routing protocols are not directly comparable.";
     }
     leaf tag {
       type uint32;
-      description "Route tag";
+      description
+        "The tag is a 32-bit opaque value assoicaute with the 
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+
     }
     leaf application-tag {
       type uint32;
-      description "Additional Application-Specific Route tag. This
-                   additional tag can be used by applications that
-                   require semantics and policy different from that
-                   of the tag. For example, the tag is usually
-                   automatically advertised in OSPF AS-External
-                   Link State Advertisements (LSAs) while this
-                   application specific tag is not unless done so
-                   explicitly.";
+      description
+        "The application-specific tag is an additional tag that
+         can be used applications that require semantics and/or
+         policy different from that of the tag. For example,
+         the tag is usually automatically advertised in OSPF
+         AS-External Link State Advertisements (LSAs) while this
+         application-specific tag is not advertised implicitly.";
     }
   }
   grouping repair-path-attribute {
