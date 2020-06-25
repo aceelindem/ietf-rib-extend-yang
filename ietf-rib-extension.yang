@@ -161,8 +161,8 @@ module ietf-rib-extension {
          application-specific tag is not advertised implicitly.";
     }
   }
-  grouping repair-next-hop {
-    container repair-next-hop {
+  grouping repair-path {
+    container repair-path {
       description
         "IP Fast Reroute next-hop repair path";
       leaf outgoing-interface {
@@ -314,7 +314,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses repair-next-hop;
+    uses repair-path;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -323,7 +323,7 @@ module ietf-rib-extension {
   {
     description
       "Add more parameters to a path.";
-    uses repair-next-hop;
+    uses repair-path;
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -333,6 +333,6 @@ module ietf-rib-extension {
     description
       "This case augments the 'next-hop-options' in the routing
        model.";
-    uses repair-next-hop;
+    uses repair-path;
   }
 }
