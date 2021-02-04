@@ -4,8 +4,6 @@
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
     <!ENTITY RFC3688 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'>
-    <!ENTITY RFC5246 PUBLIC '' 
-      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml'>
     <!ENTITY RFC5714 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5714.xml'>
     <!ENTITY RFC6020 PUBLIC '' 
@@ -32,6 +30,8 @@
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8343.xml'> 
     <!ENTITY RFC8349 PUBLIC '' 
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8349.xml'>
+    <!ENTITY RFC8446 PUBLIC '' 
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8446.xml'>
     ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <?rfc strict="no" ?>
@@ -42,10 +42,10 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-05" >
+<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-06" >
 
 <front>
-<title abbrev="YANG RIB">RIB YANG Data Model</title> 
+<title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title> 
    <author initials='A.' surname="Lindem" fullname='Acee Lindem'>
     <organization>Cisco Systems</organization>
     <address>
@@ -86,13 +86,13 @@
 
 <middle>
 <section title="Introduction">
-  <t>This document defines a YANG, <xref target="RFC6020"/><xref target="RFC7950"/>, 
+  <t>This document defines a YANG <xref target="RFC6020"/><xref target="RFC7950"/> 
   data model which extends the generic data model for RIB by augmenting the 
   ietf-routing model as defined in <xref target="RFC8349"/>.</t>
 
-<t>RIB is a collection of best routes from all routing protocols. Within a protocol
+<t>RIB is a collection of best routes from all routing protocols. Within a protocol,
 routes are selected based on the metrics in use by that protocol, and
-the protocol install its best routes to RIB. RIB selects the best route
+the protocol installs its best routes to RIB. RIB selects the best route
 by comparing the route preference (aka, administrative distance) of 
 the associated protocol.</t>
 <t>The augmentations described herein extend the RIB to support 
@@ -178,12 +178,12 @@ implement and monitor a RIB.</t>
 </t>
 
 <section title="RIB Tags and Preference">
-<t>Individual routes tags will be supported at both the route and next-hop level. 
+<t>Individual routes tags are supported at both the route and next-hop level. 
 A preference per next-hop is also supported for selection of the most preferred
 reachable static route.</t>
 </section>
 <section title="Multiple next-hops">
-<t>Both Ipv4 and IPv6 static route configuration defined in
+<t>Both IPv4 and IPv6 static route configuration defined in
 <xref target="RFC8349"/> have been augmented with a multi-next-hop
 option.</t>
 <t>A static route/prefix can be configured to have multiple
@@ -195,7 +195,7 @@ next-hops, each with their own tag and route preference.</t>
 <t>The IP Fast Reroute (IPFRR) pre-computes repair
 paths by routing protocols <xref target="RFC5714"/>, and the best
 repair path is installed in RIB.</t>
-<t>A repair path is augmented in RIB operation state for each path.</t>
+<t>Each route in RIB is augmented with the best repair path if available.</t>
 </section>
 </section>
 
@@ -267,10 +267,10 @@ module: ietf-rib-extension
 </figure>
 </section> 
 
-<section title="RIB YANG Model">
+<section title="RIB Extension YANG Model">
 <figure>
 <artwork><![CDATA[
-<CODE BEGINS> file "ietf-rib-extension@2020-09-18.yang"
+<CODE BEGINS> file "ietf-rib-extension@2021-02-03.yang"
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -279,22 +279,31 @@ module ietf-rib-extension {
 
   import ietf-inet-types {
     prefix "inet";
+    reference "RFC 6991: Common YANG Data Types";
   }
 
   import ietf-interfaces {
     prefix "if";
+    reference "RFC 8343: A YANG Data Model for Interface
+                         Management (NMDA Version)";
   }
 
   import ietf-routing {
     prefix "rt";
+    reference "RFC 8349: A YANG Data Model for Routing
+                         Management (NMDA Version)";
   }
 
   import ietf-ipv4-unicast-routing {
     prefix "v4ur";
+    reference "RFC 8349: A YANG Data Model for Routing
+                         Management (NMDA Version)";
   }
 
   import ietf-ipv6-unicast-routing {
     prefix "v6ur";
+    reference "RFC 8349: A YANG Data Model for Routing
+                         Management (NMDA Version)";
   }
 
   organization
@@ -318,7 +327,7 @@ module ietf-rib-extension {
      This YANG model conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
 
-     Copyright (c) 2020 IETF Trust and the persons identified as
+     Copyright (c) 2021 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
 
      Redistribution and use in source and binary forms, with or
@@ -331,7 +340,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2020-09-18 {
+  revision 2021-02-03 {
     description
       "Initial RFC Version";
     reference
@@ -420,7 +429,7 @@ module ietf-rib-extension {
     leaf tag {
       type uint32;
       description
-        "The tag is a 32-bit opaque value associate with the
+        "The tag is a 32-bit opaque value associated with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -428,7 +437,7 @@ module ietf-rib-extension {
       type uint32;
       description
         "The application-specific tag is an additional tag that
-         can be used applications that require semantics and/or
+         can be used by applications that require semantics and/or
          policy different from that of the tag. For example,
          the tag is usually automatically advertised in OSPF
          AS-External Link State Advertisements (LSAs) while this
@@ -484,7 +493,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value associate with the
+        "The tag is a 32-bit opaque value associated with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -511,7 +520,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value associate with the
+        "The tag is a 32-bit opaque value associated with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -537,7 +546,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value associate with the
+        "The tag is a 32-bit opaque value associated with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -564,7 +573,7 @@ module ietf-rib-extension {
       type uint32;
       default "0";
       description
-        "The tag is a 32-bit opaque value associate with the
+        "The tag is a 32-bit opaque value associated with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -624,7 +633,7 @@ module ietf-rib-extension {
        RESTCONF <xref target="RFC8040"/>. The lowest NETCONF layer is the secure transport
        layer, and the mandatory-to-implement secure transport is Secure Shell (SSH)
        <xref target="RFC6242"/>. The lowest RESTCONF layer is HTTPS, and the
-       mandatory-to-implement secure transport is TLS <xref target="RFC5246"/>.</t>
+       mandatory-to-implement secure transport is TLS <xref target="RFC8446"/>.</t>
 
    <t>The NETCONF access control model <xref target="RFC8341"/> provides the 
       means to restrict access for particular NETCONF or RESTCONF users to a
@@ -653,17 +662,28 @@ module ietf-rib-extension {
 
 <section title="IANA Considerations">
 <t> This document registers a URI in the IETF XML registry 
-   <xref target="XML-REGISTRY"/>.  Following the format in <xref target="RFC3688"/>, the following
+   <xref target="RFC3688"/>.  Following the format in <xref target="RFC3688"/>, the following
    registration is requested to be made:
-   <list>
-   <t>URI: urn:ietf:params:xml:ns:yang:ietf-rib-extension</t>
-   <t> Registrant Contact: The IESG.</t>
-   <t> XML: N/A, the requested URI is an XML namespace.</t>
+   <figure>
+   <artwork>
+   URI: urn:ietf:params:xml:ns:yang:ietf-rib-extension
+   Registrant Contact: The IESG.
+   XML: N/A, the requested URI is an XML namespace.
+   </artwork>
+   </figure>
+ </t>
+
    <t>This document registers a YANG module in the YANG Module Names
-   registry <xref target="RFC6020"/>.</t>
-   <t>name: ietf-acl namespace: urn:ietf:params:xml:ns:yang:ietf-rib-extension
-     prefix: ietf-rib-ext reference: RFC XXXX</t>
-  </list></t>
+   registry <xref target="RFC6020"/>.
+   <figure>
+   <artwork>
+   name: ietf-rib-extension 
+   namespace: urn:ietf:params:xml:ns:yang:ietf-rib-extension
+   prefix: rib-ext 
+   reference: RFC XXXX
+   </artwork>
+   </figure>
+   </t>
 </section>
 
 </middle>
@@ -673,8 +693,6 @@ module ietf-rib-extension {
 <references title="Normative References">
 &RFC2119;
 &RFC3688;
-&RFC5714;
-&RFC5246;
 &RFC6020;
 &RFC6241;
 &RFC6242;
@@ -686,187 +704,149 @@ module ietf-rib-extension {
 &RFC8342;
 &RFC8343;
 &RFC8349;
+&RFC8446;
 </references>
 
 <references title="Informative References">
-<reference anchor="XML-REGISTRY">
-<front>
-<title>The IETF XML Registry</title>
-<author initials="M." surname="Mealling" fullname="Michael Mealling">
-<organization>Verisign, Inc</organization>
-</author>
-<date month="January" year="2004" />
-</front>
-<seriesInfo name="BCP" value="81" />
-</reference>
+&RFC5714;
 &RFC8340;
 </references>
 <section anchor="full-tree" title="Combined Tree Diagram">
-<t>This appendix includes the combined ietf-routing.yang and 
-ietf-rib-extensions.yang tree diagram.</t>
+<t>This appendix includes the combined ietf-routing.yang, ietf-ipv4-unicast-routing.yang,
+ietf-ipv6-unicast-routing.yang and ietf-rib-extensions.yang tree diagram.</t>
 <figure>
 <artwork> 
 module: ietf-routing
-+--rw routing
-|  +--rw router-id?                 yang:dotted-quad
-|  +--ro interfaces
-|  |  +--ro interface*   if:interface-ref
-|  +--rw control-plane-protocols
-|  |  +--rw control-plane-protocol* [type name]
-|  |     +--rw type             identityref
-|  |     +--rw name             string
-|  |     +--rw description?     string
-|  |     +--rw static-routes
-|  +--rw ribs
-|     +--rw rib* [name]
-|        +--rw name              string
-|        +--rw address-family    identityref
-|        +--ro default-rib?      boolean {multiple-ribs}?
-|        +--ro routes
-|        |  +--ro route* []
-|        |     +--ro route-preference?   route-preference
-|        |     +--ro next-hop
-|        |     |  +--ro (next-hop-options)
-|        |     |     +--:(simple-next-hop)
-|        |     |     |  +--ro outgoing-interface?   if:interface-ref
-|        |     |     +--:(special-next-hop)
-|        |     |     |  +--ro special-next-hop?     enumeration
-|        |     |     +--:(next-hop-list)
-|        |     |        +--ro next-hop-list
-|        |     |           +--ro next-hop* []
-|        |     |              +--ro outgoing-interface?
-|        |     |                      if:interface-ref
-|        |     +--ro source-protocol     identityref
-|        |     +--ro active?             empty
-|        |     +--ro last-updated?       yang:date-and-time
-|        +---x active-route
-|        |  +--ro output
-|        |     +--ro route
-|        |        +--ro next-hop
-|        |        |  +--ro (next-hop-options)
-|        |        |     +--:(simple-next-hop)
-|        |        |     |  +--ro outgoing-interface?
-|        |        |     |          if:interface-ref
-|        |        |     +--:(special-next-hop)
-|        |        |     |  +--ro special-next-hop?     enumeration
-|        |        |     +--:(next-hop-list)
-|        |        |        +--ro next-hop-list
-|        |        |           +--ro next-hop* []
-|        |        |              +--ro outgoing-interface?
-|        |        |                      if:interface-ref
-|        |        +--ro source-protocol    identityref
-|        |        +--ro active?            empty
-|        |        +--ro last-updated?      yang:date-and-time
-|        +--rw description?      string
-o--ro routing-state
-   +--ro router-id?                 yang:dotted-quad
-   o--ro interfaces
-   |  o--ro interface*   if:interface-state-ref
-   o--ro control-plane-protocols
-   |  o--ro control-plane-protocol* [type name]
-   |     o--ro type    identityref
-   |     o--ro name    string
-   o--ro ribs
-      o--ro rib* [name]
-         o--ro name              string
-         +--ro address-family    identityref
-         o--ro default-rib?      boolean {multiple-ribs}?
-         o--ro routes
-         |  o--ro route* []
-         |     o--ro route-preference?   route-preference
-         |     o--ro next-hop
-         |     |  +--ro (next-hop-options)
-         |     |     +--:(simple-next-hop)
-         |     |     |  +--ro outgoing-interface?   if:interface-ref
-         |     |     +--:(special-next-hop)
-         |     |     |  +--ro special-next-hop?     enumeration
-         |     |     +--:(next-hop-list)
-         |     |        +--ro next-hop-list
-         |     |           +--ro next-hop* []
-         |     |              +--ro outgoing-interface?
-         |     |                      if:interface-ref
-         |     +--ro source-protocol     identityref
-         |     +--ro active?             empty
-         |     +--ro last-updated?       yang:date-and-time
-         o---x active-route
-            +--ro output
-               o--ro route
-                  o--ro next-hop
-                  |  +--ro (next-hop-options)
-                  |     +--:(simple-next-hop)
-                  |     |  +--ro outgoing-interface?
-                  |     |          if:interface-ref
-                  |     +--:(special-next-hop)
-                  |     |  +--ro special-next-hop?     enumeration
-                  |     +--:(next-hop-list)
-                  |        +--ro next-hop-list
-                  |           +--ro next-hop* []
-                  |              +--ro outgoing-interface?
-                  |                      if:interface-ref
-                  +--ro source-protocol    identityref
-                  +--ro active?            empty
-                  +--ro last-updated?      yang:date-and-time
+  +--rw routing
+    +--rw router-id?                 yang:dotted-quad {router-id}?
+    +--ro interfaces
+    |  +--ro interface*   if:interface-ref
+    +--rw control-plane-protocols
+    |  +--rw control-plane-protocol* [type name]
+    |     +--rw type             identityref
+    |     +--rw name             string
+    |     +--rw description?     string
+    |     +--rw static-routes
+    |        +--rw v4ur:ipv4
+    |        |  +--rw v4ur:route* [destination-prefix]
+    |        |     +--rw v4ur:destination-prefix    inet:ipv4-prefix
+    |        |     +--rw v4ur:description?          string
+    |        |     +--rw v4ur:next-hop
+    |        |        +--rw (v4ur:next-hop-options)
+    |        |           +--:(v4ur:simple-next-hop)
+    |        |           |  +--rw v4ur:outgoing-interface?   if:interface-ref
+    |        |           |  +--rw v4ur:next-hop-address?     inet:ipv4-address
+    |        |           |  +--rw rib-ext:preference?        uint32
+    |        |           |  +--rw rib-ext:tag?               uint32
+    |        |           +--:(v4ur:special-next-hop)
+    |        |           |  +--rw v4ur:special-next-hop?     enumeration
+    |        |           +--:(v4ur:next-hop-list)
+    |        |              +--rw v4ur:next-hop-list
+    |        |                 +--rw v4ur:next-hop* [index]
+    |        |                    +--rw v4ur:index                 string
+    |        |                    +--rw v4ur:outgoing-interface?   if:interface-ref
+    |        |                    +--rw v4ur:next-hop-address?     inet:ipv4-address
+    |        |                    +--rw rib-ext:preference?        uint32
+    |        |                    +--rw rib-ext:tag?               uint32
+    |        +--rw v6ur:ipv6
+    |           +--rw v6ur:route* [destination-prefix]
+    |              +--rw v6ur:destination-prefix    inet:ipv6-prefix
+    |              +--rw v6ur:description?          string
+    |              +--rw v6ur:next-hop
+    |                 +--rw (v6ur:next-hop-options)
+    |                    +--:(v6ur:simple-next-hop)
+    |                    |  +--rw v6ur:outgoing-interface?   if:interface-ref
+    |                    |  +--rw v6ur:next-hop-address?     inet:ipv6-address
+    |                    |  +--rw rib-ext:preference?        uint32
+    |                    |  +--rw rib-ext:tag?               uint32
+    |                    +--:(v6ur:special-next-hop)
+    |                    |  +--rw v6ur:special-next-hop?     enumeration
+    |                    +--:(v6ur:next-hop-list)
+    |                       +--rw v6ur:next-hop-list
+    |                          +--rw v6ur:next-hop* [index]
+    |                             +--rw v6ur:index                 string
+    |                             +--rw v6ur:outgoing-interface?   if:interface-ref
+    |                             +--rw v6ur:next-hop-address?     inet:ipv6-address
+    |                             +--rw rib-ext:preference?        uint32
+    |                             +--rw rib-ext:tag?               uint32
+    +--rw ribs
+       +--rw rib* [name]
+          +--rw name                            string
+          +--rw address-family                  identityref
+          +--ro default-rib?                    boolean {multiple-ribs}?
+          +--ro routes
+          |  +--ro route* []
+          |     +--ro route-preference?          route-preference
+          |     +--ro next-hop
+          |     |  +--ro (next-hop-options)
+          |     |     +--:(simple-next-hop)
+          |     |     |  +--ro outgoing-interface?      if:interface-ref
+          |     |     |  +--ro v4ur:next-hop-address?   inet:ipv4-address
+          |     |     |  +--ro v6ur:next-hop-address?   inet:ipv6-address
+          |     |     |  +--ro rib-ext:repair-path
+          |     |     |     +--ro rib-ext:outgoing-interface?   if:interface-state-ref
+          |     |     |     +--ro rib-ext:next-hop-address?     inet:ip-address
+          |     |     |     +--ro rib-ext:metric?               uint32
+          |     |     +--:(special-next-hop)
+          |     |     |  +--ro special-next-hop?        enumeration
+          |     |     |  +--ro rib-ext:repair-path
+          |     |     |     +--ro rib-ext:outgoing-interface?   if:interface-state-ref
+          |     |     |     +--ro rib-ext:next-hop-address?     inet:ip-address
+          |     |     |     +--ro rib-ext:metric?               uint32
+          |     |     +--:(next-hop-list)
+          |     |        +--ro next-hop-list
+          |     |           +--ro next-hop* []
+          |     |              +--ro outgoing-interface?    if:interface-ref
+          |     |              +--ro v4ur:address?          inet:ipv4-address
+          |     |              +--ro v6ur:address?          inet:ipv6-address
+          |     |              +--ro rib-ext:repair-path
+          |     |                 +--ro rib-ext:outgoing-interface?   if:interface-state-ref
+          |     |                 +--ro rib-ext:next-hop-address?     inet:ip-address
+          |     |                 +--ro rib-ext:metric?               uint32
+          |     +--ro source-protocol            identityref
+          |     +--ro active?                    empty
+          |     +--ro last-updated?              yang:date-and-time
+          |     +--ro v4ur:destination-prefix?   inet:ipv4-prefix
+          |     +--ro v6ur:destination-prefix?   inet:ipv6-prefix
+          |     +--ro rib-ext:metric?            uint32
+          |     +--ro rib-ext:tag?               uint32
+          |     +--ro rib-ext:application-tag?   uint32
+          +---x active-route
+          |  +---w input
+          |  |  +---w v4ur:destination-address?   inet:ipv4-address
+          |  |  +---w v6ur:destination-address?   inet:ipv6-address
+          |  +--ro output
+          |     +--ro route
+          |        +--ro next-hop
+          |        |  +--ro (next-hop-options)
+          |        |     +--:(simple-next-hop)
+          |        |     |  +--ro outgoing-interface?      if:interface-ref
+          |        |     |  +--ro v4ur:next-hop-address?   inet:ipv4-address
+          |        |     |  +--ro v6ur:next-hop-address?   inet:ipv6-address
+          |        |     +--:(special-next-hop)
+          |        |     |  +--ro special-next-hop?        enumeration
+          |        |     +--:(next-hop-list)
+          |        |        +--ro next-hop-list
+          |        |           +--ro next-hop* []
+          |        |              +--ro outgoing-interface?      if:interface-ref
+          |        |              +--ro v4ur:next-hop-address?   inet:ipv4-address
+          |        |              +--ro v6ur:next-hop-address?   inet:ipv6-address
+          |        +--ro source-protocol            identityref
+          |        +--ro active?                    empty
+          |        +--ro last-updated?              yang:date-and-time
+          |        +--ro v4ur:destination-prefix?   inet:ipv4-prefix
+          |        +--ro v6ur:destination-prefix?   inet:ipv6-prefix
+          +--rw description?                      string
+          +--ro rib-ext:rib-summary-statistics
+             +--ro rib-ext:total-routes?              uint32
+             +--ro rib-ext:total-active-routes?       uint32
+             +--ro rib-ext:total-route-memory?        uint64
+             +--ro rib-ext:protocol-rib-statistics* []
+                +--ro rib-ext:rib-protocol?             identityref
+                +--ro rib-ext:protocol-total-routes?    uint32
+                +--ro rib-ext:protocol-active-routes?   uint32
+                +--ro rib-ext:protocol-route-memory?    uint64
 
-module: ietf-rib-extension
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
-          /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
-          /v4ur:simple-next-hop:
-  +--rw preference?        uint32
-  +--rw tag?               uint32
-  +--rw application-tag?   uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
-          /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
-          /v4ur:next-hop-list/v4ur:next-hop-list/v4ur:next-hop:
-  +--rw preference?        uint32
-  +--rw tag?               uint32
-  +--rw application-tag?   uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
-          /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
-          /v6ur:simple-next-hop:
-  +--rw preference?        uint32
-  +--rw tag?               uint32
-  +--rw application-tag?   uint32
-augment /rt:routing/rt:control-plane-protocols
-          /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
-          /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
-          /v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop:
-  +--rw preference?        uint32
-  +--rw tag?               uint32
-  +--rw application-tag?   uint32
-augment /rt:routing/rt:ribs/rt:rib:
-  +--ro rib-summary-statistics
-     +--ro total-routes?              uint32
-     +--ro total-active-routes?       uint32
-     +--ro total-route-memory?        uint64
-     +--ro protocol-rib-statistics* []
-        +--ro rib-protocol?             identityref
-        +--ro protocol-total-routes?    uint32
-        +--ro protocol-active-routes?   uint32
-        +--ro protocol-route-memory?    uint64
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route:
-  +--ro metric?            uint32
-  +--ro tag?               uint32
-  +--ro application-tag?   uint32
-augment /rt:routing/rt:ribs/rt:rib/rt:routes:
-  +--ro repair-route* [id]
-     +--ro id          string
-     +--ro next-hop
-     |  +--ro outgoing-interface?   if:interface-state-ref
-     |  +--ro next-hop-address?     inet:ip-address
-     +--ro metric?     uint32
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rt:next-hop
-          /rt:next-hop-options/rt:simple-next-hop:
-  +--ro repair-path?   -> /rt:routing/ribs/rib/routes/repair-route/id
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rt:next-hop
-          /rt:next-hop-options/rt:special-next-hop:
-  +--ro repair-path?   -> /rt:routing/ribs/rib/routes/repair-route/id
-augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rt:next-hop
-          /rt:next-hop-options/rt:next-hop-list/rt:next-hop-list
-          /rt:next-hop:
-  +--ro repair-path?   -> /rt:routing/ribs/rib/routes/repair-route/id
 </artwork> 
 </figure>
 </section>
@@ -875,76 +855,114 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rt:next-hop
   and RFC 8349.</t>
   <figure>
   <artwork><![CDATA[
-<routing
- xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
+<routing xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
   <control-plane-protocols>
     <control-plane-protocol>
       <type>static</type>
       <name>static-routing-protocol</name>
       <static-routes>
-        <ipv4 
-          xmlns="urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
+        <ipv4 xmlns="urn:ietf:params:xml:ns:yang:\
+          ietf-ipv4-unicast-routing">
           <route>
             <destination-prefix>0.0.0.0/0</destination-prefix>
             <next-hop>
               <next-hop-address>192.0.2.2</next-hop-address>
-              <preference 
-                xmlns="urn:ietf:params:xml:ns:yang:ietf-rib-extension">
-                30</preference>
-              <tag 
-                xmlns="urn:ietf:params:xml:ns:yang:ietf-rib-extension">
-                99</tag>
+              <preference xmlns="urn:ietf:params:xml:ns:yang:\
+                ietf-rib-extension">30</preference>
+              <tag xmlns="urn:ietf:params:xml:ns:yang:\
+                ietf-rib-extension">99</tag>
             </next-hop>
           </route>
         </ipv4>
+        <ipv6 xmlns="urn:ietf:params:xml:ns:yang:\
+          ietf-ipv6-unicast-routing">
+          <route>
+            <destination-prefix>0::/0</destination-prefix>
+            <next-hop>
+              <next-hop-address>2001:db8:aaaa::1111</next-hop-address>
+              <preference xmlns="urn:ietf:params:xml:ns:yang:\
+                ietf-rib-extension">30</preference>
+              <tag xmlns="urn:ietf:params:xml:ns:yang:\
+                ietf-rib-extension">66</tag>
+            </next-hop>
+          </route>
+        </ipv6>
       </static-routes>
     </control-plane-protocol>
   </control-plane-protocols>
   <ribs>
     <rib>
       <name>ipv4-master</name>
-      <address-family xmlns:v4ur=
-        "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
-        v4ur:ipv4-unicast</address-family>
+      <address-family xmlns:v4ur="urn:ietf:params:xml:ns:yang:\
+        ietf-ipv4-unicast-routing">v4ur:ipv4-unicast</address-family>
       <default-rib>true</default-rib>
       <routes>
-        <repair-route xmlns=
-          "urn:ietf:params:xml:ns:yang:ietf-rib-extension">
-          <id>1</id>
-          <next-hop>
-            <next-hop-address>10.0.0.1</next-hop-address>
-          </next-hop>
-          <metric>200</metric>
-        </repair-route>
         <route>
-          <destination-prefix xmlns=
-            "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
-            0.0.0.0/0</destination-prefix>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv4-unicast-routing">0.0.0.0/0</destination-prefix>
           <next-hop>
-            <next-hop-address xmlns=
-              "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
-              192.0.2.2</next-hop-address>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv4-unicast-routing">192.0.2.2</next-hop-address>
           </next-hop>
           <route-preference>5</route-preference>
           <source-protocol>static</source-protocol>
           <last-updated>2015-10-24T18:02:45+02:00</last-updated>
         </route>
         <route>
-          <destination-prefix xmlns=
-            "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
-            192.1.1.0/24</destination-prefix>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv4-unicast-routing">198.51.100.0/24\
+          </destination-prefix>
           <next-hop>
-            <next-hop-address xmlns=
-              "urn:ietf:params:xml:ns:yang:ietf-ipv4-unicast-routing">
-              192.0.2.2</next-hop-address>
-            <repair-path 
-              xmlns="urn:ietf:params:xml:ns:yang:ietf-rib-extension">
-              1</repair-path>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv4-unicast-routing">192.0.2.2</next-hop-address>
+            <repair-path xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-rib-extension">
+              <next-hop-address>203.0.113.1</next-hop-address>
+              <metric>200</metric>
+            </repair-path>
           </next-hop>
           <route-preference>110</route-preference>
-          <source-protocol 
-            xmlns:ospf="urn:ietf:params:xml:ns:yang:ietf-ospf">
-            ospf:ospf</source-protocol>
+          <source-protocol xmlns:ospf="urn:ietf:params:xml:ns:yang:\
+            ietf-ospf">ospf:ospf</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+      </routes>
+    </rib>
+    <rib>
+      <name>ipv6-master</name>
+      <address-family xmlns:v6ur="urn:ietf:params:xml:ns:yang:\
+        ietf-ipv6-unicast-routing">v6ur:ipv6-unicast</address-family>
+      <default-rib>true</default-rib>
+      <routes>
+        <route>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv6-unicast-routing">0::/0</destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv6-unicast-routing">2001:db8:aaaa::1111\
+            </next-hop-address>
+          </next-hop>
+          <route-preference>5</route-preference>
+          <source-protocol>static</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+        <route>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv6-unicast-routing">2001:db8:bbbb::/64\
+          </destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv6-unicast-routing">2001:db8:aaaa::1111\
+            </next-hop-address>
+            <repair-path xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-rib-extension">
+              <next-hop-address>2001:db8:cccc::2222</next-hop-address>
+              <metric>200</metric>
+            </repair-path>
+          </next-hop>
+          <route-preference>110</route-preference>
+          <source-protocol xmlns:ospf="urn:ietf:params:xml:ns:yang:\
+            ietf-ospf">ospf:ospf</source-protocol>
           <last-updated>2015-10-24T18:02:45+02:00</last-updated>
         </route>
       </routes>
@@ -954,14 +972,131 @@ augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rt:next-hop
  ]]>
   </artwork> 
 </figure>
+  <t>The following is the same example using JSON format.</t>
+    <figure>
+  <artwork><![CDATA[
+{
+  "ietf-routing:routing": {
+    "control-plane-protocols": {
+      "control-plane-protocol": [
+        {
+          "type": "static",
+          "name": "static-routing-protocol",
+          "static-routes": {
+            "ietf-ipv4-unicast-routing:ipv4": {
+              "route": [
+                {
+                  "destination-prefix": "0.0.0.0/0",
+                  "next-hop": {
+                    "next-hop-address": "192.0.2.2",
+                    "ietf-rib-extension:preference": 30,
+                    "ietf-rib-extension:tag": 99
+                  }
+                }
+              ]
+            },
+            "ietf-ipv6-unicast-routing:ipv6": {
+              "route": [
+                {
+                  "destination-prefix": "::/0",
+                  "next-hop": {
+                    "next-hop-address": "2001:db8:aaaa::1111",
+                    "ietf-rib-extension:preference": 30,
+                    "ietf-rib-extension:tag": 66
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ribs": {
+      "rib": [
+        {
+          "name": "ipv4-master",
+          "address-family": "ietf-ipv4-unicast-routing:ipv4-unicast",
+          "default-rib": true,
+          "routes": {
+            "route": [
+              {
+                "next-hop": {
+                  "ietf-ipv4-unicast-routing:next-hop-address": \
+                  "192.0.2.2"
+                },
+                "route-preference": 5,
+                "source-protocol": "static",
+                "last-updated": "2015-10-24T18:02:45+02:00",
+                "ietf-ipv4-unicast-routing:destination-prefix": \
+                "0.0.0.0/0"
+              },
+              {
+                "next-hop": {
+                  "ietf-rib-extension:repair-path": {
+                    "next-hop-address": "203.0.113.1",
+                    "metric": 200
+                  },
+                  "ietf-ipv4-unicast-routing:next-hop-address": \
+                  "192.0.2.2"
+                },
+                "route-preference": 110,
+                "source-protocol": "ietf-ospf:ospf",
+                "last-updated": "2015-10-24T18:02:45+02:00",
+                "ietf-ipv4-unicast-routing:destination-prefix": \
+                "198.51.100.0/24"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ipv6-master",
+          "address-family": "ietf-ipv6-unicast-routing:ipv6-unicast",
+          "default-rib": true,
+          "routes": {
+            "route": [
+              {
+                "next-hop": {
+                  "ietf-ipv6-unicast-routing:next-hop-address": \
+                  "2001:db8:aaaa::1111"
+                },
+                "route-preference": 5,
+                "source-protocol": "static",
+                "last-updated": "2015-10-24T18:02:45+02:00",
+                "ietf-ipv6-unicast-routing:destination-prefix": "::/0"
+              },
+              {
+                "next-hop": {
+                  "ietf-rib-extension:repair-path": {
+                    "next-hop-address": "2001:db8:cccc::2222",
+                    "metric": 200
+                  },
+                  "ietf-ipv6-unicast-routing:next-hop-address": \
+                  "2001:db8:aaaa::1111"
+                },
+                "route-preference": 110,
+                "source-protocol": "ietf-ospf:ospf",
+                "last-updated": "2015-10-24T18:02:45+02:00",
+                "ietf-ipv6-unicast-routing:destination-prefix": \
+                "2001:db8:bbbb::/64"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+     ]]>
+  </artwork> 
+</figure>
 </section>
 <?rfc needLines="100"?>
 <section title="Acknowledgments">
   <t>The RFC text was produced using Marshall Rose's xml2rfc tool.</t>
   <t>The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
      for their helpful comments and suggestions.</t>
-  <t>The authors wish to thank Tom Petch and Rob Wilton for review and
-     comments.</t>
+  <t>The authors wish to thank Tom Petch, Rob Wilton and Chris Hopps for 
+     their reviews and comments.</t>
 </section>
 </back>
 </rfc>
