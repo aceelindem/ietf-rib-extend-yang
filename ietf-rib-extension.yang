@@ -67,9 +67,9 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2021-02-03 {
+  revision 2021-04-20 {
     description
-      "Initial RFC Version";
+      "Initial Version";
     reference
       "RFC XXXX: A YANG Data Model for RIB Extensions.";
   }
@@ -77,48 +77,50 @@ module ietf-rib-extension {
   /* Groupings */
   grouping rib-statistics {
     description 
-      "Statistics grouping used for RIB augmentation";
-    container rib-summary-statistics {
+      "Statistics grouping used for RIB augmentation.";
+    container statistics {
       config false;
-      description "Container for RIB statistics";
+      description 
+        "Container for RIB statistics.";
       leaf total-routes {
         type uint32;
         description
-          "Total routes in the RIB from all protocols";
+          "Total routes in the RIB";
       }
       leaf total-active-routes {
         type uint32;
         description
-          "Total active routes in the RIB";
+          "Total active routes in the RIB.";
       }
       leaf total-route-memory {
         type uint64;
+        units "bytes"
         description
-          "Total memory for all routes in the RIB from all
-           protocol clients";
+          "Total memory for all routes in the RIB.";
       }
-      list protocol-rib-statistics {
-        description "List protocol statistics";
-        leaf rib-protocol {
+      list protocol-statistics {
+        description "RIB statistics per protocol.";
+        leaf protocol {
           type identityref {
             base rt:routing-protocol;
           }
-          description "Routing protocol for statistics";
+          description "Routing protocol.";
         }
-        leaf protocol-total-routes {
+        leaf routes {
           type uint32;
           description
-            "Total number routes for protocol in the RIB";
+            "Total routes for protocol in the RIB.";
         }
-        leaf protocol-active-routes {
+        leaf active-routes {
           type uint32;
           description
-            "Number active routes for protocol in the RIB";
+            "Total active routes for protocol in the RIB.";
         }
-        leaf protocol-route-memory {
+        leaf route-memory {
           type uint64;
+          units "bytes";
           description
-            "Total memory for all routes in the RIB for protocol";
+            "Total memory for all routes for protocol in the RIB.";
         }
       }
     }
@@ -135,13 +137,13 @@ module ietf-rib-extension {
     leaf address {
       type inet:ip-address;
       description
-        "IPv4 or IPv6 Address of the next-hop";
+        "IPv4 or IPv6 Address of the next-hop.";
     }
   }
 
   grouping attributes {
     description
-      "Common attributes applicable to all paths";
+      "Common attributes applicable to all routes.";
     leaf metric {
       type uint32;
       description
@@ -176,7 +178,7 @@ module ietf-rib-extension {
       "Grouping for IP Fast Reroute repair path.";
     container repair-path {
       description
-        "IP Fast Reroute next-hop repair path";
+        "IP Fast Reroute next-hop repair path.";
       leaf outgoing-interface {
         type if:interface-state-ref;
         description
@@ -308,7 +310,8 @@ module ietf-rib-extension {
 
   augment "/rt:routing/rt:ribs/rt:rib"
   {
-    description "Augment a RIB with statistics";
+    description 
+      "Augment a RIB with statistics.";
     uses rib-statistics;
   }
 
