@@ -340,7 +340,9 @@ module ietf-rib-extension {
       leaf total-active-routes {
         type uint32;
         description
-          "Total active routes in the RIB.";
+          "Total active routes in the RIB. An active route is
+           preferred over other routes to the same destination
+           prefix.";
       }
       leaf total-route-memory {
         type uint64;
@@ -356,7 +358,7 @@ module ietf-rib-extension {
           }
           description "Routing protocol.";
         }
-        leaf total-routes {
+        leaf routes {
           type uint32;
           description
             "Total routes for protocol in the RIB.";
@@ -364,7 +366,9 @@ module ietf-rib-extension {
         leaf active-routes {
           type uint32;
           description
-            "Total active routes for protocol in the RIB.";
+            "Total active routes for protocol in the RIB. An active
+             route is preferred over other routes to the same
+             destination prefix.";
         }
         leaf route-memory {
           type uint64;
