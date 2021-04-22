@@ -162,7 +162,7 @@ Datastore Architecture (NMDA) [RFC8342].</t>
 <t>The YANG definitions in this document augment the routing data model
 defined in <xref target="RFC8349"/>, which provides a basis
 for routing system data model development. Together with YANG modules defined in
-<xref target="RFC8349"/>, a generic RIB Yang model is defined to
+<xref target="RFC8349"/>, a generic RIB YANG model is defined to
 implement and monitor a RIB.</t>
 <t>The models in <xref target="RFC8349"/> also define the basic
   configuration and operational state for both IPv4 and IPv6 static routes and this document
