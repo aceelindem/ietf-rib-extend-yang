@@ -697,135 +697,155 @@ ietf-ipv6-unicast-routing.yang and ietf-rib-extensions.yang tree diagram.</t>
 <figure>
 <artwork>
 module: ietf-routing
-  +--rw routing
-    +--rw router-id?                 yang:dotted-quad {router-id}?
-    +--ro interfaces
-    |  +--ro interface*   if:interface-ref
-    +--rw control-plane-protocols
-    |  +--rw control-plane-protocol* [type name]
-    |     +--rw type             identityref
-    |     +--rw name             string
-    |     +--rw description?     string
-    |     +--rw static-routes
-    |        +--rw v4ur:ipv4
-    |        |  +--rw v4ur:route* [destination-prefix]
-    |        |     +--rw v4ur:destination-prefix    inet:ipv4-prefix
-    |        |     +--rw v4ur:description?          string
-    |        |     +--rw v4ur:next-hop
-    |        |        +--rw (v4ur:next-hop-options)
-    |        |           +--:(v4ur:simple-next-hop)
-    |        |           |  +--rw v4ur:outgoing-interface?   if:interface-ref
-    |        |           |  +--rw v4ur:next-hop-address?     inet:ipv4-address
-    |        |           |  +--rw rib-ext:preference?        uint32
-    |        |           |  +--rw rib-ext:tag?               uint32
-    |        |           +--:(v4ur:special-next-hop)
-    |        |           |  +--rw v4ur:special-next-hop?     enumeration
-    |        |           +--:(v4ur:next-hop-list)
-    |        |              +--rw v4ur:next-hop-list
-    |        |                 +--rw v4ur:next-hop* [index]
-    |        |                    +--rw v4ur:index                 string
-    |        |                    +--rw v4ur:outgoing-interface?   if:interface-ref
-    |        |                    +--rw v4ur:next-hop-address?     inet:ipv4-address
-    |        |                    +--rw rib-ext:preference?        uint32
-    |        |                    +--rw rib-ext:tag?               uint32
-    |        +--rw v6ur:ipv6
-    |           +--rw v6ur:route* [destination-prefix]
-    |              +--rw v6ur:destination-prefix    inet:ipv6-prefix
-    |              +--rw v6ur:description?          string
-    |              +--rw v6ur:next-hop
-    |                 +--rw (v6ur:next-hop-options)
-    |                    +--:(v6ur:simple-next-hop)
-    |                    |  +--rw v6ur:outgoing-interface?   if:interface-ref
-    |                    |  +--rw v6ur:next-hop-address?     inet:ipv6-address
-    |                    |  +--rw rib-ext:preference?        uint32
-    |                    |  +--rw rib-ext:tag?               uint32
-    |                    +--:(v6ur:special-next-hop)
-    |                    |  +--rw v6ur:special-next-hop?     enumeration
-    |                    +--:(v6ur:next-hop-list)
-    |                       +--rw v6ur:next-hop-list
-    |                          +--rw v6ur:next-hop* [index]
-    |                             +--rw v6ur:index                 string
-    |                             +--rw v6ur:outgoing-interface?   if:interface-ref
-    |                             +--rw v6ur:next-hop-address?     inet:ipv6-address
-    |                             +--rw rib-ext:preference?        uint32
-    |                             +--rw rib-ext:tag?               uint32
-    +--rw ribs
-       +--rw rib* [name]
-          +--rw name                            string
-          +--rw address-family                  identityref
-          +--ro default-rib?                    boolean {multiple-ribs}?
-          +--ro routes
-          |  +--ro route* []
-          |     +--ro route-preference?          route-preference
-          |     +--ro next-hop
-          |     |  +--ro (next-hop-options)
-          |     |     +--:(simple-next-hop)
-          |     |     |  +--ro outgoing-interface?      if:interface-ref
-          |     |     |  +--ro v4ur:next-hop-address?   inet:ipv4-address
-          |     |     |  +--ro v6ur:next-hop-address?   inet:ipv6-address
-          |     |     |  +--ro rib-ext:repair-path
-          |     |     |     +--ro rib-ext:outgoing-interface?   if:interface-state-ref
-          |     |     |     +--ro rib-ext:next-hop-address?     inet:ip-address
-          |     |     |     +--ro rib-ext:metric?               uint32
-          |     |     +--:(special-next-hop)
-          |     |     |  +--ro special-next-hop?        enumeration
-          |     |     |  +--ro rib-ext:repair-path
-          |     |     |     +--ro rib-ext:outgoing-interface?   if:interface-state-ref
-          |     |     |     +--ro rib-ext:next-hop-address?     inet:ip-address
-          |     |     |     +--ro rib-ext:metric?               uint32
-          |     |     +--:(next-hop-list)
-          |     |        +--ro next-hop-list
-          |     |           +--ro next-hop* []
-          |     |              +--ro outgoing-interface?    if:interface-ref
-          |     |              +--ro v4ur:address?          inet:ipv4-address
-          |     |              +--ro v6ur:address?          inet:ipv6-address
-          |     |              +--ro rib-ext:repair-path
-          |     |                 +--ro rib-ext:outgoing-interface?   if:interface-state-ref
-          |     |                 +--ro rib-ext:next-hop-address?     inet:ip-address
-          |     |                 +--ro rib-ext:metric?               uint32
-          |     +--ro source-protocol            identityref
-          |     +--ro active?                    empty
-          |     +--ro last-updated?              yang:date-and-time
-          |     +--ro v4ur:destination-prefix?   inet:ipv4-prefix
-          |     +--ro v6ur:destination-prefix?   inet:ipv6-prefix
-          |     +--ro rib-ext:metric?            uint32
-          |     +--ro rib-ext:tag?               uint32
-          |     +--ro rib-ext:application-tag?   uint32
-          +---x active-route
-          |  +---w input
-          |  |  +---w v4ur:destination-address?   inet:ipv4-address
-          |  |  +---w v6ur:destination-address?   inet:ipv6-address
-          |  +--ro output
-          |     +--ro route
-          |        +--ro next-hop
-          |        |  +--ro (next-hop-options)
-          |        |     +--:(simple-next-hop)
-          |        |     |  +--ro outgoing-interface?      if:interface-ref
-          |        |     |  +--ro v4ur:next-hop-address?   inet:ipv4-address
-          |        |     |  +--ro v6ur:next-hop-address?   inet:ipv6-address
-          |        |     +--:(special-next-hop)
-          |        |     |  +--ro special-next-hop?        enumeration
-          |        |     +--:(next-hop-list)
-          |        |        +--ro next-hop-list
-          |        |           +--ro next-hop* []
-          |        |              +--ro outgoing-interface?      if:interface-ref
-          |        |              +--ro v4ur:next-hop-address?   inet:ipv4-address
-          |        |              +--ro v6ur:next-hop-address?   inet:ipv6-address
-          |        +--ro source-protocol            identityref
-          |        +--ro active?                    empty
-          |        +--ro last-updated?              yang:date-and-time
-          |        +--ro v4ur:destination-prefix?   inet:ipv4-prefix
-          |        +--ro v6ur:destination-prefix?   inet:ipv6-prefix
-          +--rw description?                      string
-          +--ro rib-ext:statistics
-             +--ro rib-ext:total-routes?              uint32
-             +--ro rib-ext:total-active-routes?       uint32
-             +--ro rib-ext:total-route-memory?        uint64
-             +--ro rib-ext:protocol-statistics* []
-                +--ro rib-ext:protocol?             identityref
-                +--ro rib-ext:routes?    uint32
-                +--ro rib-ext:active-routes?   uint32
-                +--ro rib-ext:route-memory?    uint64
++--rw routing
+  +--rw router-id?                 yang:dotted-quad {router-id}?
+  +--ro interfaces
+  |  +--ro interface*   if:interface-ref
+  +--rw control-plane-protocols
+  |  +--rw control-plane-protocol* [type name]
+  |     +--rw type             identityref
+  |     +--rw name             string
+  |     +--rw description?     string
+  |     +--rw static-routes
+  |        +--rw v4ur:ipv4
+  |        |  +--rw v4ur:route* [destination-prefix]
+  |        |     +--rw v4ur:destination-prefix    inet:ipv4-prefix
+  |        |     +--rw v4ur:description?          string
+  |        |     +--rw v4ur:next-hop
+  |        |        +--rw (v4ur:next-hop-options)
+  |        |           +--:(v4ur:simple-next-hop)
+  |        |           |  +--rw v4ur:outgoing-interface?
+  |        |           |  |   if:interface-ref
+  |        |           |  +--rw v4ur:next-hop-address?
+  |        |           |  |   inet:ipv4-address
+  |        |           |  +--rw rib-ext:preference?        uint32
+  |        |           |  +--rw rib-ext:tag?               uint32
+  |        |           +--:(v4ur:special-next-hop)
+  |        |           |  +--rw v4ur:special-next-hop?     enumeration
+  |        |           +--:(v4ur:next-hop-list)
+  |        |              +--rw v4ur:next-hop-list
+  |        |                 +--rw v4ur:next-hop* [index]
+  |        |                    +--rw v4ur:index                 string
+  |        |                    +--rw v4ur:outgoing-interface?
+  |        |                    |   if:interface-ref
+  |        |                    +--rw v4ur:next-hop-address?
+  |        |                    |   inet:ipv4-address
+  |        |                    +--rw rib-ext:preference?        uint32
+  |        |                    +--rw rib-ext:tag?               uint32
+  |        +--rw v6ur:ipv6
+  |           +--rw v6ur:route* [destination-prefix]
+  |              +--rw v6ur:destination-prefix    inet:ipv6-prefix
+  |              +--rw v6ur:description?          string
+  |              +--rw v6ur:next-hop
+  |                 +--rw (v6ur:next-hop-options)
+  |                    +--:(v6ur:simple-next-hop)
+  |                    |  +--rw v6ur:outgoing-interface?
+  |                    |  |   if:interface-ref
+  |                    |  +--rw v6ur:next-hop-address?
+  |                    |  |   inet:ipv6-address
+  |                    |  +--rw rib-ext:preference?        uint32
+  |                    |  +--rw rib-ext:tag?               uint32
+  |                    +--:(v6ur:special-next-hop)
+  |                    |  +--rw v6ur:special-next-hop?     enumeration
+  |                    +--:(v6ur:next-hop-list)
+  |                       +--rw v6ur:next-hop-list
+  |                          +--rw v6ur:next-hop* [index]
+  |                             +--rw v6ur:index                 string
+  |                             +--rw v6ur:outgoing-interface?
+  |                             |   if:interface-ref
+  |                             +--rw v6ur:next-hop-address?
+  |                             |   inet:ipv6-address
+  |                             +--rw rib-ext:preference?        uint32
+  |                             +--rw rib-ext:tag?               uint32
+  +--rw ribs
+     +--rw rib* [name]
+        +--rw name                            string
+        +--rw address-family                  identityref
+        +--ro default-rib?                    boolean {multiple-ribs}?
+        +--ro routes
+        |  +--ro route* []
+        |     +--ro route-preference?          route-preference
+        |     +--ro next-hop
+        |     |  +--ro (next-hop-options)
+        |     |     +--:(simple-next-hop)
+        |     |     |  +--ro outgoing-interface?      if:interface-ref
+        |     |     |  +--ro v4ur:next-hop-address?   inet:ipv4-address
+        |     |     |  +--ro v6ur:next-hop-address?   inet:ipv6-address
+        |     |     |  +--ro rib-ext:repair-path
+        |     |     |     +--ro rib-ext:outgoing-interface?
+        |     |     |     |   if:interface-state-ref
+        |     |     |     +--ro rib-ext:next-hop-address?
+        |     |     |     |   inet:ip-address
+        |     |     |     +--ro rib-ext:metric?               uint32
+        |     |     +--:(special-next-hop)
+        |     |     |  +--ro special-next-hop?        enumeration
+        |     |     |  +--ro rib-ext:repair-path
+        |     |     |     +--ro rib-ext:outgoing-interface?
+        |     |     |     |   if:interface-state-ref
+        |     |     |     +--ro rib-ext:next-hop-address?
+        |     |     |     |   inet:ip-address
+        |     |     |     +--ro rib-ext:metric?               uint32
+        |     |     +--:(next-hop-list)
+        |     |        +--ro next-hop-list
+        |     |           +--ro next-hop* []
+        |     |              +--ro outgoing-interface?
+        |     |              |   if:interface-ref
+        |     |              +--ro v4ur:address?
+        |     |              |   inet:ipv4-address
+        |     |              +--ro v6ur:address?
+        |     |              |   inet:ipv6-address
+        |     |              +--ro rib-ext:repair-path
+        |     |                 +--ro rib-ext:outgoing-interface?
+        |     |                 |   if:interface-state-ref
+        |     |                 +--ro rib-ext:next-hop-address?
+        |     |                 |   inet:ip-address
+        |     |                 +--ro rib-ext:metric?            uint32
+        |     +--ro source-protocol            identityref
+        |     +--ro active?                    empty
+        |     +--ro last-updated?              yang:date-and-time
+        |     +--ro v4ur:destination-prefix?   inet:ipv4-prefix
+        |     +--ro v6ur:destination-prefix?   inet:ipv6-prefix
+        |     +--ro rib-ext:metric?            uint32
+        |     +--ro rib-ext:tag?               uint32
+        |     +--ro rib-ext:application-tag?   uint32
+        +---x active-route
+        |  +---w input
+        |  |  +---w v4ur:destination-address?   inet:ipv4-address
+        |  |  +---w v6ur:destination-address?   inet:ipv6-address
+        |  +--ro output
+        |     +--ro route
+        |        +--ro next-hop
+        |        |  +--ro (next-hop-options)
+        |        |     +--:(simple-next-hop)
+        |        |     |  +--ro outgoing-interface?    if:interface-ref
+        |        |     |  +--ro v4ur:next-hop-address? inet:ipv4-address
+        |        |     |  +--ro v6ur:next-hop-address? inet:ipv6-address
+        |        |     +--:(special-next-hop)
+        |        |     |  +--ro special-next-hop?        enumeration
+        |        |     +--:(next-hop-list)
+        |        |        +--ro next-hop-list
+        |        |           +--ro next-hop* []
+        |        |              +--ro outgoing-interface?
+        |        |              |   if:interface-ref
+        |        |              +--ro v4ur:next-hop-address?
+        |        |              |   inet:ipv4-address
+        |        |              +--ro v6ur:next-hop-address?
+        |        |              |   inet:ipv6-address
+        |        +--ro source-protocol            identityref
+        |        +--ro active?                    empty
+        |        +--ro last-updated?              yang:date-and-time
+        |        +--ro v4ur:destination-prefix?   inet:ipv4-prefix
+        |        +--ro v6ur:destination-prefix?   inet:ipv6-prefix
+        +--rw description?                      string
+        +--ro rib-ext:statistics
+           +--ro rib-ext:total-routes?              uint32
+           +--ro rib-ext:total-active-routes?       uint32
+           +--ro rib-ext:total-route-memory?        uint64
+           +--ro rib-ext:protocol-statistics* []
+              +--ro rib-ext:protocol?             identityref
+              +--ro rib-ext:routes?    uint32
+              +--ro rib-ext:active-routes?   uint32
+              +--ro rib-ext:route-memory?    uint64
 
 </artwork>
 </figure>
