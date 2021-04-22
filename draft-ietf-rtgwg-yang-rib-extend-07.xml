@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="US-ASCII"?>
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
-    <!ENTITY RFC2119 PUBLIC '' 
+    <!ENTITY RFC2119 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
-    <!ENTITY RFC3688 PUBLIC '' 
+    <!ENTITY RFC3688 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3688.xml'>
-    <!ENTITY RFC5714 PUBLIC '' 
+    <!ENTITY RFC5714 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5714.xml'>
-    <!ENTITY RFC6020 PUBLIC '' 
+    <!ENTITY RFC6020 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml'>
-    <!ENTITY RFC6241 PUBLIC '' 
+    <!ENTITY RFC6241 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6241.xml'>
-    <!ENTITY RFC6242 PUBLIC '' 
+    <!ENTITY RFC6242 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6242.xml'>
-    <!ENTITY RFC6991 PUBLIC '' 
+    <!ENTITY RFC6991 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6991.xml'>
-    <!ENTITY RFC7950 PUBLIC '' 
+    <!ENTITY RFC7950 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7950.xml'>
-    <!ENTITY RFC8040 PUBLIC '' 
+    <!ENTITY RFC8040 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8040.xml'>
-    <!ENTITY RFC8174 PUBLIC '' 
+    <!ENTITY RFC8174 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml'>
-    <!ENTITY RFC8340 PUBLIC '' 
+    <!ENTITY RFC8340 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8340.xml'>
-    <!ENTITY RFC8341 PUBLIC '' 
-      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8341.xml'> 
-    <!ENTITY RFC8342 PUBLIC '' 
-      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8342.xml'> 
-    <!ENTITY RFC8343 PUBLIC '' 
-      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8343.xml'> 
-    <!ENTITY RFC8349 PUBLIC '' 
+    <!ENTITY RFC8341 PUBLIC ''
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8341.xml'>
+    <!ENTITY RFC8342 PUBLIC ''
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8342.xml'>
+    <!ENTITY RFC8343 PUBLIC ''
+      'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8343.xml'>
+    <!ENTITY RFC8349 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8349.xml'>
-    <!ENTITY RFC8446 PUBLIC '' 
+    <!ENTITY RFC8446 PUBLIC ''
       'http://xml.resource.org/public/rfc/bibxml/reference.RFC.8446.xml'>
     ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -45,19 +45,19 @@
 <rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-07" >
 
 <front>
-<title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title> 
+<title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
    <author initials='A.' surname="Lindem" fullname='Acee Lindem'>
     <organization>Cisco Systems</organization>
     <address>
       <postal>
         <street>301 Midenhall Way</street>
-        <city>Cary</city> <region>NC</region> 
+        <city>Cary</city> <region>NC</region>
         <country>USA</country>
-        <code>27513</code> 
+        <code>27513</code>
        </postal>
        <email>acee@cisco.com</email>
     </address>
-    </author>  
+    </author>
     <author fullname="Yingzhen Qu" initials="Y" surname="Qu">
       <organization>Futurewei</organization>
       <address>
@@ -73,29 +73,29 @@
       </address>
     </author>
   <date/>
-  <abstract> 
-     <t>The Routing Information Base (RIB) is a list of routes and their 
+  <abstract>
+     <t>The Routing Information Base (RIB) is a list of routes and their
         corresponding administrative data and operational state.</t>
 
-     <t>RFC 8349 defines the 
-     basic building blocks for RIB, and this model augments it to support 
+     <t>RFC 8349 defines the
+     basic building blocks for RIB, and this model augments it to support
      multiple next-hops (aka, paths) for each route as well as additional
-     attributes.</t> 
+     attributes.</t>
   </abstract>
 </front>
 
 <middle>
 <section title="Introduction">
-  <t>This document defines a YANG <xref target="RFC6020"/><xref target="RFC7950"/> 
-  data model which extends the generic data model for RIB by augmenting the 
+  <t>This document defines a YANG <xref target="RFC6020"/><xref target="RFC7950"/>
+  data model which extends the generic data model for RIB by augmenting the
   ietf-routing YANG module as defined in <xref target="RFC8349"/>.</t>
 
 <t>RIB is a collection of best routes from all routing protocols. Within a protocol,
 routes are selected based on the metrics in use by that protocol, and
 the protocol installs its best routes to RIB. RIB selects the best route
-by comparing the route preference (aka, administrative distance) of 
+by comparing the route preference (aka, administrative distance) of
 the associated protocol.</t>
-<t>The augmentations described herein extend the RIB to support 
+<t>The augmentations described herein extend the RIB to support
 multiple paths per route, route metrics, and administrative tags.</t>
 <t> The YANG modules in this document conform to the Network Management
 Datastore Architecture (NMDA) [RFC8342].</t>
@@ -105,7 +105,7 @@ Datastore Architecture (NMDA) [RFC8342].</t>
   <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
      "MAY", and "OPTIONAL" in this document are to be interpreted as
-     described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> 
+     described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
      when, and only when, they appear in all capitals, as shown here.</t>
   <t>The following terms are defined in <xref target="RFC8342"/>:
     <list style="symbols">
@@ -159,25 +159,25 @@ Datastore Architecture (NMDA) [RFC8342].</t>
 </section>
 
 <section title="Design of the Model">
-<t>The YANG definitions in this document augment the routing data model 
+<t>The YANG definitions in this document augment the routing data model
 defined in <xref target="RFC8349"/>, which provides a basis
 for routing system data model development. Together with YANG modules defined in
 <xref target="RFC8349"/>, a generic RIB Yang model is defined to
 implement and monitor a RIB.</t>
 <t>The models in <xref target="RFC8349"/> also define the basic
   configuration and operational state for both IPv4 and IPv6 static routes and this document
-  also provides  augmentations for static routes to support multiple next-hop 
-  and more next-hop attributes. 
+  also provides  augmentations for static routes to support multiple next-hop
+  and more next-hop attributes.
 </t>
 
 <section title="Tags and Preference">
-<t>Individual route tags are supported at both the route and next-hop level. 
+<t>Individual route tags are supported at both the route and next-hop level.
 A preference per next-hop is also supported for selection of the most preferred
 reachable static route.</t>
-<t>The following tree snapshot shows tag and preference which augment 
+<t>The following tree snapshot shows tag and preference which augment
   static IPv4 unicast and IPv6 unicast next hop list.</t>
 <figure>
-<artwork> 
+<artwork>
   augment /rt:routing/rt:control-plane-protocols
           /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
           /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
@@ -202,14 +202,14 @@ reachable static route.</t>
           /v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop:
     +--rw preference?   uint32
     +--rw tag?          uint32
-</artwork> 
+</artwork>
 </figure>
 </section>
 <section title="Repair Path">
 <t>The IP Fast Reroute (IPFRR) pre-computes repair
 paths by routing protocols <xref target="RFC5714"/>, and the best
 repair path is installed in RIB.</t>
-<t>Each route in RIB is augmented with the best repair path if available, 
+<t>Each route in RIB is augmented with the best repair path if available,
 and is shown in the following tree snapshot.</t>
 <figure>
 <artwork>
@@ -233,16 +233,16 @@ and is shown in the following tree snapshot.</t>
        +--ro outgoing-interface?   if:interface-state-ref
        +--ro next-hop-address?     inet:ip-address
        +--ro metric?               uint32
-</artwork> 
+</artwork>
 </figure>
 </section>
 </section>
 
 <section anchor="rib.tree" title="RIB Model Tree">
- <t> The ietf-routing.yang tree with the augmentations herein is 
-  included in <xref target="full-tree"/>. The meaning of the symbols 
+ <t> The ietf-routing.yang tree with the augmentations herein is
+  included in <xref target="full-tree"/>. The meaning of the symbols
   can be found in <xref target="RFC8340"/>.</t>
-</section> 
+</section>
 
 <section title="RIB Extension YANG Model">
 <figure>
@@ -297,8 +297,8 @@ module ietf-rib-extension {
 
   description
     "This YANG module extends the generic data model for
-     RIB by augmenting the ietf-routing model. It is 
-     intended that the module will be extended by vendors 
+     RIB by augmenting the ietf-routing model. It is
+     intended that the module will be extended by vendors
      to define vendor-specific RIB parameters.
 
      This YANG model conforms to the Network Management
@@ -326,11 +326,11 @@ module ietf-rib-extension {
 
   /* Groupings */
   grouping rib-statistics {
-    description 
+    description
       "Statistics grouping used for RIB augmentation.";
     container statistics {
       config false;
-      description 
+      description
         "Container for RIB statistics.";
       leaf total-routes {
         type uint32;
@@ -560,7 +560,7 @@ module ietf-rib-extension {
 
   augment "/rt:routing/rt:ribs/rt:rib"
   {
-    description 
+    description
       "Augment a RIB with statistics.";
     uses rib-statistics;
   }
@@ -604,10 +604,10 @@ module ietf-rib-extension {
 <CODE ENDS>
 ]]></artwork>
 </figure>
-</section> 
+</section>
 
 <section title="Security Considerations">
-    <t>The YANG modules specified in this document define a schema for 
+    <t>The YANG modules specified in this document define a schema for
        data that is designed to be accessed via network
        management protocols such as NETCONF <xref target="RFC6241"/> or
        RESTCONF <xref target="RFC8040"/>. The lowest NETCONF layer is the secure transport
@@ -615,33 +615,33 @@ module ietf-rib-extension {
        <xref target="RFC6242"/>. The lowest RESTCONF layer is HTTPS, and the
        mandatory-to-implement secure transport is TLS <xref target="RFC8446"/>.</t>
 
-   <t>The NETCONF access control model <xref target="RFC8341"/> provides the 
+   <t>The NETCONF access control model <xref target="RFC8341"/> provides the
       means to restrict access for particular NETCONF or RESTCONF users to a
-      pre-configured subset of all available NETCONF or RESTCONF protocol 
+      pre-configured subset of all available NETCONF or RESTCONF protocol
       operations and content.</t>
 
-   <t>There are a number of data nodes defined in ietf-rib-extensions.yang module that are 
-      writable/creatable/deletable (i.e., config true, which is the default). 
-      These data nodes may be considered sensitive or vulnerable in some network 
-      environments. Write operations (e.g., edit-config) to these data nodes without 
-      proper protection can have a negative effect on network operations. For these 
-      augmentations to ietf-routing.yang,  the ability to delete, add, and modify IPv4 and 
-      IPv6 static routes would allow traffic to be misrouted.</t> 
+   <t>There are a number of data nodes defined in ietf-rib-extensions.yang module that are
+      writable/creatable/deletable (i.e., config true, which is the default).
+      These data nodes may be considered sensitive or vulnerable in some network
+      environments. Write operations (e.g., edit-config) to these data nodes without
+      proper protection can have a negative effect on network operations. For these
+      augmentations to ietf-routing.yang,  the ability to delete, add, and modify IPv4 and
+      IPv6 static routes would allow traffic to be misrouted.</t>
 
    <t>Some of the readable data nodes in the ietf-rib-extensions.yang module may be
-      considered sensitive or vulnerable in some network environments. It is thus 
+      considered sensitive or vulnerable in some network environments. It is thus
       important to control read access (e.g., via get, get-config, or notification)
       to these data nodes. The exposure of the Routing Information Base (RIB) will
       expose the routing topology of the network. This may be undesirable since
-      both due to the fact that exposure may facilitate other attacks. Additionally, 
+      both due to the fact that exposure may facilitate other attacks. Additionally,
       network operators may consider their topologies to be sensitive confidential
       data.</t>
-   <t>All the security considerations for <xref target="RFC8349"/> writable and 
+   <t>All the security considerations for <xref target="RFC8349"/> writable and
       readable data nodes apply to the augmentations described herein.</t>
 </section>
 
 <section title="IANA Considerations">
-<t> This document registers a URI in the IETF XML registry 
+<t> This document registers a URI in the IETF XML registry
    <xref target="RFC3688"/>.  Following the format in <xref target="RFC3688"/>, the following
    registration is requested to be made:
    <figure>
@@ -657,9 +657,9 @@ module ietf-rib-extension {
    registry <xref target="RFC6020"/>.
    <figure>
    <artwork>
-   name: ietf-rib-extension 
+   name: ietf-rib-extension
    namespace: urn:ietf:params:xml:ns:yang:ietf-rib-extension
-   prefix: rib-ext 
+   prefix: rib-ext
    reference: RFC XXXX
    </artwork>
    </figure>
@@ -695,7 +695,7 @@ module ietf-rib-extension {
 <t>This appendix includes the combined ietf-routing.yang, ietf-ipv4-unicast-routing.yang,
 ietf-ipv6-unicast-routing.yang and ietf-rib-extensions.yang tree diagram.</t>
 <figure>
-<artwork> 
+<artwork>
 module: ietf-routing
   +--rw routing
     +--rw router-id?                 yang:dotted-quad {router-id}?
@@ -827,11 +827,11 @@ module: ietf-routing
                 +--ro rib-ext:active-routes?   uint32
                 +--ro rib-ext:route-memory?    uint64
 
-</artwork> 
+</artwork>
 </figure>
 </section>
 <section anchor="examples" title="ietf-rib-extension.yang example">
-<t>The following is an XML example using the RIB extension module 
+<t>The following is an XML example using the RIB extension module
   and RFC 8349.</t>
   <figure>
   <artwork><![CDATA[
@@ -950,7 +950,7 @@ module: ietf-routing
   </ribs>
 </routing>
  ]]>
-  </artwork> 
+  </artwork>
 </figure>
   <t>The following is the same example using JSON format.</t>
     <figure>
@@ -1067,7 +1067,7 @@ module: ietf-routing
   }
 }
      ]]>
-  </artwork> 
+  </artwork>
 </figure>
 </section>
 <?rfc needLines="100"?>
@@ -1075,7 +1075,7 @@ module: ietf-routing
   <t>The RFC text was produced using Marshall Rose's xml2rfc tool.</t>
   <t>The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
      for their helpful comments and suggestions.</t>
-  <t>The authors wish to thank Tom Petch, Rob Wilton and Chris Hopps for 
+  <t>The authors wish to thank Tom Petch, Rob Wilton and Chris Hopps for
      their reviews and comments.</t>
 </section>
 </back>

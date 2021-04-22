@@ -47,8 +47,8 @@ module ietf-rib-extension {
 
   description
     "This YANG module extends the generic data model for
-     RIB by augmenting the ietf-routing model. It is 
-     intended that the module will be extended by vendors 
+     RIB by augmenting the ietf-routing model. It is
+     intended that the module will be extended by vendors
      to define vendor-specific RIB parameters.
 
      This YANG model conforms to the Network Management
@@ -76,11 +76,11 @@ module ietf-rib-extension {
 
   /* Groupings */
   grouping rib-statistics {
-    description 
+    description
       "Statistics grouping used for RIB augmentation.";
     container statistics {
       config false;
-      description 
+      description
         "Container for RIB statistics.";
       leaf total-routes {
         type uint32;
@@ -310,7 +310,7 @@ module ietf-rib-extension {
 
   augment "/rt:routing/rt:ribs/rt:rib"
   {
-    description 
+    description
       "Augment a RIB with statistics.";
     uses rib-statistics;
   }
