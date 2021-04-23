@@ -346,7 +346,7 @@ module ietf-rib-extension {
       }
       leaf total-route-memory {
         type uint64;
-        units "bytes"
+        units "bytes";
         description
           "Total memory for all routes in the RIB.";
       }
@@ -409,10 +409,10 @@ module ietf-rib-extension {
          with a higher metric. However, metrics from different
          routing protocols are not directly comparable.";
     }
-    leaf tag {
+    leaf-list tag {
       type uint32;
       description
-        "The tag is a 32-bit opaque value associated with the
+        "A tag is a 32-bit opaque value associated with the
          route that can be used for policy decisions such as
          advertisement and filtering of the route.";
     }
@@ -810,7 +810,7 @@ module: ietf-routing
         |     +--ro v4ur:destination-prefix?   inet:ipv4-prefix
         |     +--ro v6ur:destination-prefix?   inet:ipv6-prefix
         |     +--ro rib-ext:metric?            uint32
-        |     +--ro rib-ext:tag?               uint32
+        |     +--ro rib-ext:tag*               uint32
         |     +--ro rib-ext:application-tag?   uint32
         +---x active-route
         |  +---w input
