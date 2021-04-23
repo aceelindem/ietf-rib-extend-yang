@@ -42,7 +42,7 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-07" >
+<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-08" >
 
 <front>
 <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
@@ -165,8 +165,8 @@ for routing system data model development. Together with YANG modules defined in
 <xref target="RFC8349"/>, a generic RIB YANG model is defined to
 implement and monitor a RIB.</t>
 <t>The models in <xref target="RFC8349"/> also define the basic
-  configuration and operational state for both IPv4 and IPv6 static routes and this document
-  also provides  augmentations for static routes to support multiple next-hop
+  configuration and operational state for both IPv4 and IPv6 static routes. This document
+  provides  augmentations for static routes to support multiple next-hop
   and more next-hop attributes.
 </t>
 
@@ -247,7 +247,7 @@ and is shown in the following tree snapshot.</t>
 <section title="RIB Extension YANG Model">
 <figure>
 <artwork><![CDATA[
-<CODE BEGINS> file "ietf-rib-extension@2021-04-20.yang"
+<CODE BEGINS> file "ietf-rib-extension@2021-04-23.yang"
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -297,9 +297,7 @@ module ietf-rib-extension {
 
   description
     "This YANG module extends the generic data model for
-     RIB by augmenting the ietf-routing model. It is
-     intended that the module will be extended by vendors
-     to define vendor-specific RIB parameters.
+     RIB by augmenting the ietf-routing model.
 
      This YANG model conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
@@ -317,7 +315,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2021-04-20 {
+  revision 2021-04-23 {
     description
       "Initial Version";
     reference
@@ -401,8 +399,8 @@ module ietf-rib-extension {
     leaf metric {
       type uint32;
       description
-        "The metric is a numeric value that indicating the
-         cost of the route from the perspective of the routing
+        "The metric is a numeric value indicating the cost
+         of the route from the perspective of the routing
          protocol installing the route. In general, routes with
          a lower metric installed by the same routing protocol
          are lower cost to reach and are preferable to routes
@@ -468,7 +466,7 @@ module ietf-rib-extension {
       default "1";
       description
         "The preference is used to select among multiple static
-         routes, Routes with a lower preference next-hop are
+         routes. Routes with a lower preference next-hop are
          preferred and equal preference routes result in
          Equal-Cost-Multi-Path (ECMP) static routes.";
     }
@@ -495,7 +493,7 @@ module ietf-rib-extension {
       default "1";
       description
         "The preference is used to select among multiple static
-         routes, Routes with a lower preference next-hop are
+         routes. Routes with a lower preference next-hop are
          preferred and equal preference routes result in
          Equal-Cost-Multi-Path (ECMP) static routes.";
     }
@@ -521,7 +519,7 @@ module ietf-rib-extension {
       default "1";
       description
         "The preference is used to select among multiple static
-         routes, Routes with a lower preference next-hop are
+         routes. Routes with a lower preference next-hop are
          preferred and equal preference routes result in
          Equal-Cost-Multi-Path (ECMP) static routes.";
     }
@@ -548,7 +546,7 @@ module ietf-rib-extension {
       default "1";
       description
         "The preference is used to select among multiple static
-         routes, Routes with a lower preference next-hop are
+         routes. Routes with a lower preference next-hop are
          preferred and equal preference routes result in
          Equal-Cost-Multi-Path (ECMP) static routes.";
     }
