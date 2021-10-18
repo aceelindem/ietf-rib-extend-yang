@@ -46,8 +46,9 @@ module ietf-rib-extension {
                <mailto:yingzhen.qu@futurewei.com>";
 
   description
-    "This YANG module extends the generic data model for
-     RIB by augmenting the ietf-routing model.
+    "This document defines a YANG data model which extends 
+     the RIBs defined in ietf-routing YANG module with more 
+     route attributes.
 
      This YANG model conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
@@ -65,7 +66,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2021-04-23 {
+  revision 2021-10-17 {
     description
       "Initial Version";
     reference

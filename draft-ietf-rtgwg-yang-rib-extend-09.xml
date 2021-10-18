@@ -42,7 +42,7 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-08" >
+<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-09" >
 
 <front>
 <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
@@ -74,7 +74,7 @@
     </author>
   <date/>
   <abstract>
-     <t>The Routing Information Base (RIB) is a list of routes and their
+     <t>A Routing Information Base (RIB) is a list of routes and their
         corresponding administrative data and operational state.</t>
 
      <t>RFC 8349 defines the
@@ -86,17 +86,19 @@
 
 <middle>
 <section title="Introduction">
-  <t>This document defines a YANG <xref target="RFC6020"/><xref target="RFC7950"/>
-  data model which extends the generic data model for RIB by augmenting the
-  ietf-routing YANG module as defined in <xref target="RFC8349"/>.</t>
+  <t>This document defines a YANG <xref target="RFC7950"/>
+  data model which extends the RIBs defined in ietf-routing YANG module
+  <xref target="RFC8349"/> with more route attributes.</t>
 
-<t>RIB is a collection of best routes from all routing protocols. Within a protocol,
+<t>A RIB is a collection of routes with attributes controlled and 
+  manipulated by control-plane protocols. Within a protocol,
 routes are selected based on the metrics in use by that protocol, and
-the protocol installs its best routes to RIB. RIB selects the best route
-by comparing the route preference (aka, administrative distance) of
+the protocol installs the routes to RIB. RIB selects the preferred routes
+by comparing the route-preference (aka, administrative distance) of
 the associated protocol.</t>
-<t>The augmentations described herein extend the RIB to support
-multiple paths per route, route metrics, and administrative tags.</t>
+<t>The module defined in this document extends the RIBs to support more
+route attributes, such as multiple next-hops, route metrics, and
+administrative tags.</t>
 <t> The YANG modules in this document conform to the Network Management
 Datastore Architecture (NMDA) [RFC8342].</t>
 </section>
@@ -159,14 +161,14 @@ Datastore Architecture (NMDA) [RFC8342].</t>
 </section>
 
 <section title="Design of the Model">
-<t>The YANG definitions in this document augment the routing data model
+<t>The YANG module defined in this document augments the ietf-routing YANG model
 defined in <xref target="RFC8349"/>, which provides a basis
 for routing system data model development. Together with YANG modules defined in
 <xref target="RFC8349"/>, a generic RIB YANG model is defined to
 implement and monitor a RIB.</t>
 <t>The models in <xref target="RFC8349"/> also define the basic
   configuration and operational state for both IPv4 and IPv6 static routes. This document
-  provides  augmentations for static routes to support multiple next-hop
+  provides  augmentations for static routes to support multiple next-hops
   and more next-hop attributes.
 </t>
 
@@ -175,7 +177,7 @@ implement and monitor a RIB.</t>
 A preference per next-hop is also supported for selection of the most preferred
 reachable static route.</t>
 <t>The following tree snapshot shows tag and preference which augment
-  static IPv4 unicast and IPv6 unicast next hop list.</t>
+  static IPv4 unicast routes and IPv6 unicast routes next-hop.</t>
 <figure>
 <artwork>
   augment /rt:routing/rt:control-plane-protocols
@@ -207,9 +209,9 @@ reachable static route.</t>
 </section>
 <section title="Repair Path">
 <t>The IP Fast Reroute (IPFRR) pre-computes repair
-paths by routing protocols <xref target="RFC5714"/>, and the best
-repair path is installed in RIB.</t>
-<t>Each route in RIB is augmented with the best repair path if available,
+paths by routing protocols <xref target="RFC5714"/>, and the repair
+paths are installed in the RIB.</t>
+<t>Each route in the RIB is augmented with repair paths if available,
 and is shown in the following tree snapshot.</t>
 <figure>
 <artwork>
@@ -247,7 +249,7 @@ and is shown in the following tree snapshot.</t>
 <section title="RIB Extension YANG Model">
 <figure>
 <artwork><![CDATA[
-<CODE BEGINS> file "ietf-rib-extension@2021-04-23.yang"
+<CODE BEGINS> file "ietf-rib-extension@2021-10-17.yang"
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -296,8 +298,9 @@ module ietf-rib-extension {
                <mailto:yingzhen.qu@futurewei.com>";
 
   description
-    "This YANG module extends the generic data model for
-     RIB by augmenting the ietf-routing model.
+    "This document defines a YANG data model which extends 
+     the RIBs defined in ietf-routing YANG module with more 
+     route attributes.
 
      This YANG model conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
@@ -315,7 +318,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2021-04-23 {
+  revision 2021-10-17 {
     description
       "Initial Version";
     reference
@@ -609,7 +612,7 @@ module ietf-rib-extension {
 </section>
 
 <section title="Security Considerations">
-    <t>The YANG modules specified in this document define a schema for
+    <t>The YANG module specified in this document defines a schema for
        data that is designed to be accessed via network
        management protocols such as NETCONF <xref target="RFC6241"/> or
        RESTCONF <xref target="RFC8040"/>. The lowest NETCONF layer is the secure transport
@@ -626,18 +629,46 @@ module ietf-rib-extension {
       writable/creatable/deletable (i.e., config true, which is the default).
       These data nodes may be considered sensitive or vulnerable in some network
       environments. Write operations (e.g., edit-config) to these data nodes without
-      proper protection can have a negative effect on network operations. For these
-      augmentations to ietf-routing.yang,  the ability to delete, add, and modify IPv4 and
-      IPv6 static routes would allow traffic to be misrouted.</t>
+      proper protection can have a negative effect on network operations.
+      These are the subtrees and data nodes and their sensitivity/vulnerability:
+      <list style="empty">
+      <t>/v4ur:next-hop-options/v4ur:simple-next-hop/rib-ext:preference</t>
+      <t>/v4ur:next-hop-options/v4ur:simple-next-hop/rib-ext:tag</t>
+      <t>/v4ur:next-hop-options/v4ur:next-hop-list/v4ur:next-hop-list
+      /v4ur:next-hop/rib-ext:preference</t>
+      <t>/v4ur:next-hop-options/v4ur:next-hop-list/v4ur:next-hop-list
+      /v4ur:next-hop/rib-ext:tag</t>
+      <t>/v6ur:next-hop-options/v6ur:simple-next-hop/rib-ext:preference</t>
+      <t>/v6ur:next-hop-options/v6ur:simple-next-hop/rib-ext:tag</t>
+      <t>/v6ur:next-hop-options/v6ur:next-hop-list/v6ur:next-hop-list
+      /v6ur:next-hop/rib-ext:preference</t>
+      <t>/v6ur:next-hop-options/v6ur:next-hop-list/v6ur:next-hop-list
+      /v6ur:next-hop/rib-ext:tag</t> 
+      <t>For these augmentations to ietf-routing.yang, the ability to delete, add, and modify IPv4 and
+      IPv6 static route preference and tag would allow traffic to be misrouted.</t></list></t>
 
    <t>Some of the readable data nodes in the ietf-rib-extensions.yang module may be
       considered sensitive or vulnerable in some network environments. It is thus
       important to control read access (e.g., via get, get-config, or notification)
-      to these data nodes. The exposure of the Routing Information Base (RIB) will
+      to these data nodes. These are the subtrees and data nodes and
+      their sensitivity/vulnerability:
+      <list style="empty">
+      <t>/rt:routing/rt:ribs/rt:rib/rib-ext:statistics</t>
+      <t>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rib-ext:metric</t>
+      <t>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rib-ext:tag</t>
+      <t>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+      /rib-ext:application-tag</t>
+      <t>/rt:route/rt:next-hop/rt:next-hop-options/rt:simple-next-hop
+      /rib-ext:repair-path</t>
+      <t>/rt:route/rt:next-hop/rt:next-hop-options/rt:special-next-hop
+      /rib-ext:repair-path</t>
+      <t>/rt:routes/rt:route/rt:next-hop/rt:next-hop-options
+      /rt:next-hop-list/rt:next-hop-list/rt:next-hop/rib-ext:repair-path</t>
+      <t>The exposure of the Routing Information Base (RIB) will
       expose the routing topology of the network. This may be undesirable since
       both due to the fact that exposure may facilitate other attacks. Additionally,
       network operators may consider their topologies to be sensitive confidential
-      data.</t>
+      data.</t></list></t>
    <t>All the security considerations for <xref target="RFC8349"/> writable and
       readable data nodes apply to the augmentations described herein.</t>
 </section>
