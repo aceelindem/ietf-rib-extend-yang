@@ -223,12 +223,6 @@ and is shown in the following tree snapshot.</t>
        +--ro next-hop-address?     inet:ip-address
        +--ro metric?               uint32
   augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
-          /rt:next-hop/rt:next-hop-options/rt:special-next-hop:
-    +--ro repair-path
-       +--ro outgoing-interface?   if:interface-state-ref
-       +--ro next-hop-address?     inet:ip-address
-       +--ro metric?               uint32
-  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
           /rt:next-hop/rt:next-hop-options/rt:next-hop-list
           /rt:next-hop-list/rt:next-hop:
     +--ro repair-path
@@ -574,7 +568,7 @@ module ietf-rib-extension {
     + "rt:routes/rt:route"
   {
     description
-      "Augment a route in RIB with tag.";
+      "Augment a route in RIB with attributes.";
     uses attributes;
   }
 
@@ -583,16 +577,7 @@ module ietf-rib-extension {
     + "rt:simple-next-hop"
   {
     description
-      "Add more parameters to a path.";
-    uses repair-path;
-  }
-
-  augment "/rt:routing/rt:ribs/rt:rib/"
-    + "rt:routes/rt:route/rt:next-hop/rt:next-hop-options/"
-    + "rt:special-next-hop"
-  {
-    description
-      "Add more parameters to a path.";
+      "Augment simple-next-hop with repair-path.";
     uses repair-path;
   }
 
@@ -601,8 +586,7 @@ module ietf-rib-extension {
     + "rt:next-hop-list/rt:next-hop-list/rt:next-hop"
   {
     description
-      "This case augments the 'next-hop-options' in the routing
-       model.";
+      "Augment the multiple next hops with repair path.";
     uses repair-path;
   }
 }
@@ -659,8 +643,6 @@ module ietf-rib-extension {
       <t>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
       /rib-ext:application-tag</t>
       <t>/rt:route/rt:next-hop/rt:next-hop-options/rt:simple-next-hop
-      /rib-ext:repair-path</t>
-      <t>/rt:route/rt:next-hop/rt:next-hop-options/rt:special-next-hop
       /rib-ext:repair-path</t>
       <t>/rt:routes/rt:route/rt:next-hop/rt:next-hop-options
       /rt:next-hop-list/rt:next-hop-list/rt:next-hop/rib-ext:repair-path</t>
@@ -812,12 +794,6 @@ module: ietf-routing
         |     |     |     +--ro rib-ext:metric?               uint32
         |     |     +--:(special-next-hop)
         |     |     |  +--ro special-next-hop?        enumeration
-        |     |     |  +--ro rib-ext:repair-path
-        |     |     |     +--ro rib-ext:outgoing-interface?
-        |     |     |     |   if:interface-state-ref
-        |     |     |     +--ro rib-ext:next-hop-address?
-        |     |     |     |   inet:ip-address
-        |     |     |     +--ro rib-ext:metric?               uint32
         |     |     +--:(next-hop-list)
         |     |        +--ro next-hop-list
         |     |           +--ro next-hop* []
