@@ -42,7 +42,7 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-10" >
+<rfc category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-11" >
 
 <front>
 <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
@@ -91,7 +91,8 @@
   <xref target="RFC8349"/> with more route attributes.</t>
 
 <t>A RIB is a collection of routes with attributes controlled and 
-  manipulated by control-plane protocols. Within a protocol,
+  manipulated by control-plane protocols. Each RIB contains only routes
+  of one address family <xref target="RFC8349"/>. Within a protocol,
 routes are selected based on the metrics in use by that protocol, and
 the protocol installs the routes to RIB. RIB selects the preferred routes
 by comparing the route-preference (aka, administrative distance) of
@@ -886,7 +887,7 @@ module: ietf-routing
         <ipv6 xmlns="urn:ietf:params:xml:ns:yang:\
           ietf-ipv6-unicast-routing">
           <route>
-            <destination-prefix>0::/0</destination-prefix>
+            <destination-prefix>::/0</destination-prefix>
             <next-hop>
               <next-hop-address>2001:db8:aaaa::1111</next-hop-address>
               <preference xmlns="urn:ietf:params:xml:ns:yang:\
