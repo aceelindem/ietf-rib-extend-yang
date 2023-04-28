@@ -37,7 +37,7 @@ module ietf-rib-extension {
     "IETF RTGWG - Routing Working Group";
 
   contact
-    "WG Web:   <http://datatracker.ietf.org/group/rtgwg/>
+    "WG Web:   <https://datatracker.ietf.org/group/rtgwg/>
      WG List:  <mailto:rtgwg@ietf.org>
 
      Author:   Acee Lindem
@@ -66,7 +66,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-04-17 {
+  revision 2023-04-27 {
     description
       "Initial Version";
     reference
