@@ -1,0 +1,1323 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="no" ?>
+<?rfc toc="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc rfcedstyle="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-16" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true" version="3" consensus="true">
+  <!-- xml2rfc v2v3 conversion 3.17.1 -->
+  <front>
+    <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-16"/>
+    <author initials="A." surname="Lindem" fullname="Acee Lindem">
+      <organization>LabN</organization>
+      <address>
+        <postal>
+          <street>301 Midenhall Way</street>
+          <city>Cary</city>
+          <region>NC</region>
+          <country>USA</country>
+          <code>27513</code>
+        </postal>
+        <email>acee.ietf@gmail.com</email>
+      </address>
+    </author>
+    <author fullname="Yingzhen Qu" initials="Y" surname="Qu">
+      <organization>Futurewei</organization>
+      <address>
+        <postal>
+          <street>2330 Central Expressway</street>
+          <city>Santa Clara</city>
+          <region>CA</region>
+          <code>95050</code>
+          <country>USA</country>
+        </postal>
+        <phone/>
+        <email>yingzhen.qu@futurewei.com</email>
+      </address>
+    </author>
+    <date/>
+    <abstract>
+      <t>A Routing Information Base (RIB) is a list of routes and their
+        corresponding administrative data and operational state.</t>
+      <t>RFC 8349 defines the
+     basic building blocks for RIB, and this model augments it to support
+     multiple next-hops (aka, paths) for each route as well as additional
+     attributes.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section numbered="true" toc="default">
+      <name>Introduction</name>
+      <t>This document defines a YANG <xref target="RFC7950" format="default"/>
+  data model which extends the RIBs defined in ietf-routing YANG module
+  <xref target="RFC8349" format="default"/> with more route attributes.</t>
+      <t>A RIB is a collection of routes with attributes controlled and
+  manipulated by control-plane protocols. Each RIB contains only routes
+  of one address family <xref target="RFC8349" format="default"/>. Within a protocol,
+routes are selected based on the metrics in use by that protocol, and
+the protocol installs the routes to RIB. RIB selects the preferred routes
+by comparing the route-preference (aka, administrative distance) of
+the associated protocol.</t>
+      <t>The module defined in this document extends the RIBs to support more
+route attributes, such as multiple next-hops, route metrics, and
+administrative tags.</t>
+      <t> The YANG modules in this document conform to the Network Management
+Datastore Architecture (NMDA) [RFC8342].</t>
+    </section>
+    <section numbered="true" toc="default">
+      <name>Terminology and Notation</name>
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+     NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+     "MAY", and "OPTIONAL" in this document are to be interpreted as
+     described in BCP 14 <xref target="RFC2119" format="default"/> <xref target="RFC8174" format="default"/>
+     when, and only when, they appear in all capitals, as shown here.</t>
+      <t>The following terms are defined in <xref target="RFC8342" format="default"/>:
+      </t>
+      <ul spacing="normal">
+        <li>configuration</li>
+        <li>system state</li>
+        <li>operational state</li>
+      </ul>
+      <t>The following terms are defined in <xref target="RFC7950" format="default"/>:
+      </t>
+      <ul spacing="normal">
+        <li>action</li>
+        <li>augment</li>
+        <li>container</li>
+        <li>container with presence</li>
+        <li>data model</li>
+        <li>data node</li>
+        <li>leaf</li>
+        <li>list</li>
+        <li>mandatory node</li>
+        <li>module</li>
+        <li>schema tree</li>
+        <li>RPC (Remote Procedure Call) operation</li>
+      </ul>
+      <t>The following terms are defined in <xref target="RFC8349" format="default"/> Section 5.2:
+      </t>
+      <ul spacing="normal">
+        <li>RIB</li>
+      </ul>
+      <section numbered="true" toc="default">
+        <name>Tree Diagrams</name>
+        <t>Tree diagrams used in this document follow the notation defined in  <xref target="RFC8340" format="default"/>.</t>
+      </section>
+      <section anchor="sec.prefixes" numbered="true" toc="default">
+        <name>Prefixes in Data Node Names</name>
+        <t>In this document, names of data nodes, actions, and other
+        data model objects are often used without a prefix, as long as
+        it is clear from the context in which YANG module each name is
+        defined. Otherwise, names are prefixed using the standard prefix
+        associated with the corresponding YANG module, as shown in <xref target="tab.prefixes" format="default"/>.</t>
+        <table anchor="tab.prefixes" align="center">
+          <name>Prefixes and Corresponding YANG Modules</name>
+          <thead>
+            <tr>
+              <th align="left">Prefix</th>
+              <th align="left">YANG module</th>
+              <th align="left">Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left">if</td>
+              <td align="left">ietf-interfaces</td>
+              <td align="left">
+                <xref target="RFC8343" format="default"/></td>
+            </tr>
+            <tr>
+              <td align="left">rt</td>
+              <td align="left">ietf-routing</td>
+              <td align="left">
+                <xref target="RFC8349" format="default"/></td>
+            </tr>
+            <tr>
+              <td align="left">v4ur</td>
+              <td align="left">ietf-ipv4-unicast-routing</td>
+              <td align="left">
+                <xref target="RFC8349" format="default"/></td>
+            </tr>
+            <tr>
+              <td align="left">v6ur</td>
+              <td align="left">ietf-ipv6-unicast-routing</td>
+              <td align="left">
+                <xref target="RFC8349" format="default"/></td>
+            </tr>
+            <tr>
+              <td align="left">inet</td>
+              <td align="left">ietf-inet-types</td>
+              <td align="left">
+                <xref target="RFC6991" format="default"/></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+    <section numbered="true" toc="default">
+      <name>Design of the Model</name>
+      <t>The YANG module defined in this document augments the ietf-routing YANG modules
+defined in <xref target="RFC8349" format="default"/>, which provide a basis
+for routing system data model development. Together with YANG modules defined in
+<xref target="RFC8349" format="default"/>, a generic RIB YANG model is defined to
+implement and monitor a RIB.</t>
+      <t>The modules in <xref target="RFC8349" format="default"/> also define the basic
+  configuration and operational state for both IPv4 and IPv6 static routes. This document
+  provides augmentations for static routes to support multiple next-hops
+  and more next-hop attributes.
+</t>
+      <section numbered="true" toc="default">
+        <name>Tags and Preference</name>
+        <t>Individual route tags are supported at both the route and next-hop level.
+A preference per next-hop is also supported for selection of the most preferred
+reachable static route.</t>
+        <t>The following tree snapshot shows tag and preference which augment
+  static IPv4 unicast routes and IPv6 unicast routes next-hop.</t>
+        <artwork name="" type="" align="left" alt=""><![CDATA[
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
+          /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
+          /v4ur:simple-next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v4ur:ipv4
+          /v4ur:route/v4ur:next-hop/v4ur:next-hop-options
+          /v4ur:next-hop-list/v4ur:next-hop-list/v4ur:next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
+          /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
+          /v6ur:simple-next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+  augment /rt:routing/rt:control-plane-protocols
+          /rt:control-plane-protocol/rt:static-routes/v6ur:ipv6
+          /v6ur:route/v6ur:next-hop/v6ur:next-hop-options
+          /v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop:
+    +--rw preference?   uint32
+    +--rw tag?          uint32
+]]></artwork>
+      </section>
+      <section numbered="true" toc="default">
+        <name>Repair Path</name>
+        <t>The IP Fast Reroute (IPFRR) pre-computes repair
+paths by routing protocols <xref target="RFC5714" format="default"/>, and the repair
+paths are installed in the RIB.</t>
+        <t>Each route in the RIB is augmented with repair paths if available,
+and is shown in the following tree snapshot.</t>
+        <artwork name="" type="" align="left" alt=""><![CDATA[
+
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+          /rt:next-hop/rt:next-hop-options/rt:simple-next-hop:
+    +--ro repair-path
+       +--ro outgoing-interface?   if:interface-state-ref
+       +--ro next-hop-address?     inet:ip-address
+       +--ro metric?               uint32
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+          /rt:next-hop/rt:next-hop-options/rt:next-hop-list
+          /rt:next-hop-list/rt:next-hop:
+    +--ro repair-path
+       +--ro outgoing-interface?   if:interface-state-ref
+       +--ro next-hop-address?     inet:ip-address
+       +--ro metric?               uint32
+]]></artwork>
+      </section>
+    </section>
+    <section anchor="rib.tree" numbered="true" toc="default">
+      <name>RIB Model Tree</name>
+      <t> The ietf-routing.yang tree with the augmentations herein is
+  included in <xref target="full-tree" format="default"/>. The meaning of the symbols
+  can be found in <xref target="RFC8340" format="default"/>.</t>
+    </section>
+    <section numbered="true" toc="default">
+      <name>RIB Extension YANG Model</name>
+      <sourcecode name="ietf-rib-extension@2023-04-27.yang" type="" markers="true"><![CDATA[
+module ietf-rib-extension {
+  yang-version "1.1";
+  namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
+
+  prefix rib-ext;
+
+  import ietf-inet-types {
+    prefix "inet";
+    reference "RFC 6991: Common YANG Data Types";
+  }
+
+  import ietf-interfaces {
+    prefix "if";
+    reference "RFC 8343: A YANG Data Model for Interface
+                         Management (NMDA Version)";
+  }
+
+  import ietf-routing {
+    prefix "rt";
+    reference "RFC 8349: A YANG Data Model for Routing
+                         Management (NMDA Version)";
+  }
+
+  import ietf-ipv4-unicast-routing {
+    prefix "v4ur";
+    reference "RFC 8349: A YANG Data Model for Routing
+                         Management (NMDA Version)";
+  }
+
+  import ietf-ipv6-unicast-routing {
+    prefix "v6ur";
+    reference "RFC 8349: A YANG Data Model for Routing
+                         Management (NMDA Version)";
+  }
+
+  organization
+    "IETF RTGWG - Routing Working Group";
+
+  contact
+    "WG Web:   <https://datatracker.ietf.org/group/rtgwg/>
+     WG List:  <mailto:rtgwg@ietf.org>
+
+     Author:   Acee Lindem
+               <mailto:acee.ietf@gmail.com>
+     Author:   Yingzhen Qu
+               <mailto:yingzhen.qu@futurewei.com>";
+
+  description
+    "This document defines a YANG data model which extends
+     the RIBs defined in ietf-routing YANG module with more
+     route attributes.
+
+     This YANG model conforms to the Network Management
+     Datastore Architecture (NDMA) as described in RFC 8342.
+
+     Copyright (c) 2023 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms contained in, the Revised BSD License set
+     forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
+
+     This version of this YANG module is part of RFC XXXX;
+     see the RFC itself for full legal notices.";
+
+  revision 2023-04-27 {
+    description
+      "Initial Version";
+    reference
+      "RFC XXXX: A YANG Data Model for RIB Extensions.";
+  }
+
+  /* Groupings */
+  grouping rib-statistics {
+    description
+      "Statistics grouping used for RIB augmentation.";
+    container statistics {
+      config false;
+      description
+        "Container for RIB statistics.";
+      leaf total-routes {
+        type uint32;
+        description
+          "Total routes in the RIB";
+      }
+      leaf total-active-routes {
+        type uint32;
+        description
+          "Total active routes in the RIB. An active route is
+           preferred over other routes to the same destination
+           prefix.";
+      }
+      leaf total-route-memory {
+        type uint64;
+        units "bytes";
+        description
+          "Total memory for all routes in the RIB.";
+      }
+      list protocol-statistics {
+        description "RIB statistics per protocol.";
+        leaf protocol {
+          type identityref {
+            base rt:routing-protocol;
+          }
+          description "Routing protocol.";
+        }
+        leaf routes {
+          type uint32;
+          description
+            "Total routes for protocol in the RIB.";
+        }
+        leaf active-routes {
+          type uint32;
+          description
+            "Total active routes for protocol in the RIB. An active
+             route is preferred over other routes to the same
+             destination prefix.";
+        }
+        leaf route-memory {
+          type uint64;
+          units "bytes";
+          description
+            "Total memory for all routes for protocol in the RIB.";
+        }
+      }
+    }
+  }
+
+  grouping next-hop {
+    description
+      "Next-hop grouping";
+    leaf interface {
+      type if:interface-ref;
+      description
+        "Outgoing interface";
+    }
+    leaf address {
+      type inet:ip-address;
+      description
+        "IPv4 or IPv6 Address of the next-hop.";
+    }
+  }
+
+  grouping attributes {
+    description
+      "Common attributes applicable to all routes.";
+    leaf metric {
+      type uint32;
+      description
+        "The metric is a numeric value indicating the cost
+         of the route from the perspective of the routing
+         protocol installing the route. In general, routes with
+         a lower metric installed by the same routing protocol
+         are lower cost to reach and are preferable to routes
+         with a higher metric. However, metrics from different
+         routing protocols are not directly comparable.";
+    }
+    leaf-list tag {
+      type uint32;
+      description
+        "A tag is a 32-bit opaque value associated with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+    }
+    leaf application-tag {
+      type uint32;
+      description
+        "The application-specific tag is an additional tag that
+         can be used by applications that require semantics and/or
+         policy different from that of the tag. For example,
+         the tag is usually automatically advertised in OSPF
+         AS-External Link State Advertisements (LSAs) while this
+         application-specific tag is not advertised implicitly.";
+    }
+  }
+  grouping repair-path {
+    description
+      "Grouping for IP Fast Reroute repair path.";
+    container repair-path {
+      description
+        "IP Fast Reroute next-hop repair path.";
+      leaf outgoing-interface {
+        type if:interface-state-ref;
+        description
+          "Name of the outgoing interface.";
+      }
+      leaf next-hop-address {
+        type inet:ip-address;
+        description
+          "IP address of the next hop.";
+      }
+      leaf metric {
+        type uint32;
+        description
+          "The metric for the repair path. While the IP Fast
+           Reroute re-route repair is local and the metric is
+           not advertised externally, the metric for repair path
+           is useful for troubleshooting purposes.";
+      }
+      reference
+        "RFC 5714: IP Fast Reroute Framework.";
+    }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+    + "rt:control-plane-protocol/rt:static-routes/v4ur:ipv4/"
+    + "v4ur:route/v4ur:next-hop/v4ur:next-hop-options/"
+    + "v4ur:simple-next-hop"
+  {
+    description
+      "Augment 'simple-next-hop' case in IPv4 unicast route.";
+    leaf preference {
+      type uint32;
+      default "1";
+      description
+        "The preference is used to select among multiple static
+         routes. Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Multi-Path (ECMP) static routes.";
+    }
+    leaf tag {
+      type uint32;
+      default "0";
+      description
+        "The tag is a 32-bit opaque value associated with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+    }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+    + "rt:control-plane-protocol/rt:static-routes/v4ur:ipv4/"
+    + "v4ur:route/v4ur:next-hop/v4ur:next-hop-options/"
+    + "v4ur:next-hop-list/v4ur:next-hop-list/v4ur:next-hop"
+  {
+    description
+      "Augment static route configuration 'next-hop-list'.";
+
+    leaf preference {
+      type uint32;
+      default "1";
+      description
+        "The preference is used to select among multiple static
+         routes. Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Multi-Path (ECMP) static routes.";
+    }
+    leaf tag {
+      type uint32;
+      default "0";
+      description
+        "The tag is a 32-bit opaque value associated with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+    }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+    + "rt:control-plane-protocol/rt:static-routes/v6ur:ipv6/"
+    + "v6ur:route/v6ur:next-hop/v6ur:next-hop-options/"
+    + "v6ur:simple-next-hop"
+  {
+    description
+      "Augment 'simple-next-hop' case in IPv6 unicast route.";
+    leaf preference {
+      type uint32;
+      default "1";
+      description
+        "The preference is used to select among multiple static
+         routes. Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Multi-Path (ECMP) static routes.";
+    }
+    leaf tag {
+      type uint32;
+      default "0";
+      description
+        "The tag is a 32-bit opaque value associated with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+    }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+    + "rt:control-plane-protocol/rt:static-routes/v6ur:ipv6/"
+    + "v6ur:route/v6ur:next-hop/v6ur:next-hop-options/"
+    + "v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop"
+  {
+    description
+      "Augment static route configuration 'next-hop-list'.";
+
+    leaf preference {
+      type uint32;
+      default "1";
+      description
+        "The preference is used to select among multiple static
+         routes. Routes with a lower preference next-hop are
+         preferred and equal preference routes result in
+         Equal-Cost-Multi-Path (ECMP) static routes.";
+    }
+    leaf tag {
+      type uint32;
+      default "0";
+      description
+        "The tag is a 32-bit opaque value associated with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+    }
+  }
+
+  augment "/rt:routing/rt:ribs/rt:rib"
+  {
+    description
+      "Augment a RIB with statistics.";
+    uses rib-statistics;
+  }
+
+  augment "/rt:routing/rt:ribs/rt:rib/"
+    + "rt:routes/rt:route"
+  {
+    description
+      "Augment a route in RIB with attributes.";
+    uses attributes;
+  }
+
+  augment "/rt:routing/rt:ribs/rt:rib/"
+    + "rt:routes/rt:route/rt:next-hop/rt:next-hop-options/"
+    + "rt:simple-next-hop"
+  {
+    description
+      "Augment simple-next-hop with repair-path.";
+    uses repair-path;
+  }
+
+  augment "/rt:routing/rt:ribs/rt:rib/"
+    + "rt:routes/rt:route/rt:next-hop/rt:next-hop-options/"
+    + "rt:next-hop-list/rt:next-hop-list/rt:next-hop"
+  {
+    description
+      "Augment the multiple next hops with repair path.";
+    uses repair-path;
+  }
+}
+]]></sourcecode>
+    </section>
+    <section numbered="true" toc="default">
+      <name>Security Considerations</name>
+      <t>The YANG module specified in this document defines a schema for
+       data that is designed to be accessed via network
+       management protocols such as NETCONF <xref target="RFC6241" format="default"/> or
+       RESTCONF <xref target="RFC8040" format="default"/>. The lowest NETCONF layer is the secure transport
+       layer, and the mandatory-to-implement secure transport is Secure Shell (SSH)
+       <xref target="RFC6242" format="default"/>. The lowest RESTCONF layer is HTTPS, and the
+       mandatory-to-implement secure transport is TLS <xref target="RFC8446" format="default"/>.</t>
+      <t>The NETCONF access control model <xref target="RFC8341" format="default"/> provides the
+      means to restrict access for particular NETCONF or RESTCONF users to a
+      pre-configured subset of all available NETCONF or RESTCONF protocol
+      operations and content.</t>
+      <t>There are a number of data nodes defined in ietf-rib-extensions.yang module that are
+      writable/creatable/deletable (i.e., config true, which is the default).
+      These data nodes may be considered sensitive or vulnerable in some network
+      environments. Write operations (e.g., edit-config) to these data nodes without
+      proper protection can have a negative effect on network operations.
+      These are the subtrees and data nodes and their sensitivity/vulnerability:
+      </t>
+      <ul empty="true" spacing="normal">
+        <li>/v4ur:next-hop-options/v4ur:simple-next-hop/rib-ext:preference</li>
+        <li>/v4ur:next-hop-options/v4ur:simple-next-hop/rib-ext:tag</li>
+        <li>/v4ur:next-hop-options/v4ur:next-hop-list/v4ur:next-hop-list
+      /v4ur:next-hop/rib-ext:preference</li>
+        <li>/v4ur:next-hop-options/v4ur:next-hop-list/v4ur:next-hop-list
+      /v4ur:next-hop/rib-ext:tag</li>
+        <li>/v6ur:next-hop-options/v6ur:simple-next-hop/rib-ext:preference</li>
+        <li>/v6ur:next-hop-options/v6ur:simple-next-hop/rib-ext:tag</li>
+        <li>/v6ur:next-hop-options/v6ur:next-hop-list/v6ur:next-hop-list
+      /v6ur:next-hop/rib-ext:preference</li>
+        <li>/v6ur:next-hop-options/v6ur:next-hop-list/v6ur:next-hop-list
+      /v6ur:next-hop/rib-ext:tag</li>
+        <li>For these augmentations to ietf-routing.yang, the ability to delete, add, and modify IPv4 and
+      IPv6 static route preference and tag would allow traffic to be misrouted.</li>
+      </ul>
+      <t>Some of the readable data nodes in the ietf-rib-extensions.yang module may be
+      considered sensitive or vulnerable in some network environments. It is thus
+      important to control read access (e.g., via get, get-config, or notification)
+      to these data nodes. These are the subtrees and data nodes and
+      their sensitivity/vulnerability:
+      </t>
+      <ul empty="true" spacing="normal">
+        <li>/rt:routing/rt:ribs/rt:rib/rib-ext:statistics</li>
+        <li>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rib-ext:metric</li>
+        <li>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route/rib-ext:tag</li>
+        <li>/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
+      /rib-ext:application-tag</li>
+        <li>/rt:route/rt:next-hop/rt:next-hop-options/rt:simple-next-hop
+      /rib-ext:repair-path</li>
+        <li>/rt:routes/rt:route/rt:next-hop/rt:next-hop-options
+      /rt:next-hop-list/rt:next-hop-list/rt:next-hop/rib-ext:repair-path</li>
+        <li>The exposure of the Routing Information Base (RIB) will
+      expose the routing topology of the network. This may be undesirable
+      due to the fact that exposure may facilitate other attacks. Additionally,
+      network operators may consider their topologies to be sensitive confidential
+      data.</li>
+      </ul>
+      <t>All the security considerations for <xref target="RFC8349" format="default"/> writable and
+      readable data nodes apply to the augmentations described herein.</t>
+    </section>
+    <section numbered="true" toc="default">
+      <name>IANA Considerations</name>
+      <t> This document registers a URI in the IETF XML registry
+   <xref target="RFC3688" format="default"/>.  Following the format in <xref target="RFC3688" format="default"/>, the following
+   registration is requested to be made:
+      </t>
+      <artwork name="" type="" align="left" alt=""><![CDATA[
+   URI: urn:ietf:params:xml:ns:yang:ietf-rib-extension
+   Registrant Contact: The IESG.
+   XML: N/A, the requested URI is an XML namespace.
+   ]]></artwork>
+      <t>This document registers a YANG module in the YANG Module Names
+   registry <xref target="RFC6020" format="default"/>.
+      </t>
+      <artwork name="" type="" align="left" alt=""><![CDATA[
+   name: ietf-rib-extension
+   namespace: urn:ietf:params:xml:ns:yang:ietf-rib-extension
+   prefix: rib-ext
+   reference: RFC XXXX
+   ]]></artwork>
+    </section>
+  </middle>
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" xml:base="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author initials="S." surname="Bradner" fullname="S. Bradner">
+              <organization/>
+            </author>
+            <date year="1997" month="March"/>
+            <abstract>
+              <t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC3688" target="https://www.rfc-editor.org/info/rfc3688" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3688.xml">
+          <front>
+            <title>The IETF XML Registry</title>
+            <author fullname="M. Mealling" initials="M." surname="Mealling"/>
+            <date month="January" year="2004"/>
+            <abstract>
+              <t>This document describes an IANA maintained registry for IETF standards which use Extensible Markup Language (XML) related items such as Namespaces, Document Type Declarations (DTDs), Schemas, and Resource Description Framework (RDF) Schemas.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="81"/>
+          <seriesInfo name="RFC" value="3688"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3688"/>
+        </reference>
+        <reference anchor="RFC6020" target="https://www.rfc-editor.org/info/rfc6020" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6020.xml">
+          <front>
+            <title>YANG - A Data Modeling Language for the Network Configuration Protocol (NETCONF)</title>
+            <author fullname="M. Bjorklund" initials="M." role="editor" surname="Bjorklund"/>
+            <date month="October" year="2010"/>
+            <abstract>
+              <t>YANG is a data modeling language used to model configuration and state data manipulated by the Network Configuration Protocol (NETCONF), NETCONF remote procedure calls, and NETCONF notifications. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6020"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6020"/>
+        </reference>
+        <reference anchor="RFC6241" target="https://www.rfc-editor.org/info/rfc6241" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6241.xml">
+          <front>
+            <title>Network Configuration Protocol (NETCONF)</title>
+            <author fullname="R. Enns" initials="R." role="editor" surname="Enns"/>
+            <author fullname="M. Bjorklund" initials="M." role="editor" surname="Bjorklund"/>
+            <author fullname="J. Schoenwaelder" initials="J." role="editor" surname="Schoenwaelder"/>
+            <author fullname="A. Bierman" initials="A." role="editor" surname="Bierman"/>
+            <date month="June" year="2011"/>
+            <abstract>
+              <t>The Network Configuration Protocol (NETCONF) defined in this document provides mechanisms to install, manipulate, and delete the configuration of network devices.  It uses an Extensible Markup Language (XML)-based data encoding for the configuration data as well as the protocol messages.  The NETCONF protocol operations are realized as remote procedure calls (RPCs).  This document obsoletes RFC 4741. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6241"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6241"/>
+        </reference>
+        <reference anchor="RFC6242" target="https://www.rfc-editor.org/info/rfc6242" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6242.xml">
+          <front>
+            <title>Using the NETCONF Protocol over Secure Shell (SSH)</title>
+            <author fullname="M. Wasserman" initials="M." surname="Wasserman"/>
+            <date month="June" year="2011"/>
+            <abstract>
+              <t>This document describes a method for invoking and running the Network Configuration Protocol (NETCONF) within a Secure Shell (SSH) session as an SSH subsystem.  This document obsoletes RFC 4742. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6242"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6242"/>
+        </reference>
+        <reference anchor="RFC6991" target="https://www.rfc-editor.org/info/rfc6991" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6991.xml">
+          <front>
+            <title>Common YANG Data Types</title>
+            <author fullname="J. Schoenwaelder" initials="J." role="editor" surname="Schoenwaelder"/>
+            <date month="July" year="2013"/>
+            <abstract>
+              <t>This document introduces a collection of common data types to be used with the YANG data modeling language.  This document obsoletes RFC 6021.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6991"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6991"/>
+        </reference>
+        <reference anchor="RFC7950" target="https://www.rfc-editor.org/info/rfc7950" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7950.xml">
+          <front>
+            <title>The YANG 1.1 Data Modeling Language</title>
+            <author fullname="M. Bjorklund" initials="M." role="editor" surname="Bjorklund"/>
+            <date month="August" year="2016"/>
+            <abstract>
+              <t>YANG is a data modeling language used to model configuration data, state data, Remote Procedure Calls, and notifications for network management protocols.  This document describes the syntax and semantics of version 1.1 of the YANG language.  YANG version 1.1 is a maintenance release of the YANG language, addressing ambiguities and defects in the original specification.  There are a small number of backward incompatibilities from YANG version 1.  This document also specifies the YANG mappings to the Network Configuration Protocol (NETCONF).</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7950"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7950"/>
+        </reference>
+        <reference anchor="RFC8040" target="https://www.rfc-editor.org/info/rfc8040" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8040.xml">
+          <front>
+            <title>RESTCONF Protocol</title>
+            <author fullname="A. Bierman" initials="A." surname="Bierman"/>
+            <author fullname="M. Bjorklund" initials="M." surname="Bjorklund"/>
+            <author fullname="K. Watsen" initials="K." surname="Watsen"/>
+            <date month="January" year="2017"/>
+            <abstract>
+              <t>This document describes an HTTP-based protocol that provides a programmatic interface for accessing data defined in YANG, using the datastore concepts defined in the Network Configuration Protocol (NETCONF).</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8040"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8040"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" xml:base="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization/>
+            </author>
+            <date year="2017" month="May"/>
+            <abstract>
+              <t>RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8341" target="https://www.rfc-editor.org/info/rfc8341" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8341.xml">
+          <front>
+            <title>Network Configuration Access Control Model</title>
+            <author fullname="A. Bierman" initials="A." surname="Bierman"/>
+            <author fullname="M. Bjorklund" initials="M." surname="Bjorklund"/>
+            <date month="March" year="2018"/>
+            <abstract>
+              <t>The standardization of network configuration interfaces for use with the Network Configuration Protocol (NETCONF) or the RESTCONF protocol requires a structured and secure operating environment that promotes human usability and multi-vendor interoperability. There is a need for standard mechanisms to restrict NETCONF or RESTCONF protocol access for particular users to a preconfigured subset of all available NETCONF or RESTCONF protocol operations and content. This document defines such an access control model.</t>
+              <t>This document obsoletes RFC 6536.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="91"/>
+          <seriesInfo name="RFC" value="8341"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8341"/>
+        </reference>
+        <reference anchor="RFC8342" target="https://www.rfc-editor.org/info/rfc8342" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8342.xml">
+          <front>
+            <title>Network Management Datastore Architecture (NMDA)</title>
+            <author fullname="M. Bjorklund" initials="M." surname="Bjorklund"/>
+            <author fullname="J. Schoenwaelder" initials="J." surname="Schoenwaelder"/>
+            <author fullname="P. Shafer" initials="P." surname="Shafer"/>
+            <author fullname="K. Watsen" initials="K." surname="Watsen"/>
+            <author fullname="R. Wilton" initials="R." surname="Wilton"/>
+            <date month="March" year="2018"/>
+            <abstract>
+              <t>Datastores are a fundamental concept binding the data models written in the YANG data modeling language to network management protocols such as the Network Configuration Protocol (NETCONF) and RESTCONF.  This document defines an architectural framework for datastores based on the experience gained with the initial simpler model, addressing requirements that were not well supported in the initial model.  This document updates RFC 7950.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8342"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8342"/>
+        </reference>
+        <reference anchor="RFC8343" target="https://www.rfc-editor.org/info/rfc8343" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8343.xml">
+          <front>
+            <title>A YANG Data Model for Interface Management</title>
+            <author fullname="M. Bjorklund" initials="M." surname="Bjorklund"/>
+            <date month="March" year="2018"/>
+            <abstract>
+              <t>This document defines a YANG data model for the management of network interfaces. It is expected that interface-type-specific data models augment the generic interfaces data model defined in this document. The data model includes definitions for configuration and system state (status information and counters for the collection of statistics).</t>
+              <t>The YANG data model in this document conforms to the Network Management Datastore Architecture (NMDA) defined in RFC 8342.</t>
+              <t>This document obsoletes RFC 7223.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8343"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8343"/>
+        </reference>
+        <reference anchor="RFC8349" target="https://www.rfc-editor.org/info/rfc8349" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8349.xml">
+          <front>
+            <title>A YANG Data Model for Routing Management (NMDA Version)</title>
+            <author fullname="L. Lhotka" initials="L." surname="Lhotka"/>
+            <author fullname="A. Lindem" initials="A." surname="Lindem"/>
+            <author fullname="Y. Qu" initials="Y." surname="Qu"/>
+            <date month="March" year="2018"/>
+            <abstract>
+              <t>This document specifies three YANG modules and one submodule. Together, they form the core routing data model that serves as a framework for configuring and managing a routing subsystem. It is expected that these modules will be augmented by additional YANG modules defining data models for control-plane protocols, route filters, and other functions. The core routing data model provides common building blocks for such extensions -- routes, Routing Information Bases (RIBs), and control-plane protocols.</t>
+              <t>The YANG modules in this document conform to the Network Management Datastore Architecture (NMDA). This document obsoletes RFC 8022.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8349"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8349"/>
+        </reference>
+        <reference anchor="RFC8446" target="https://www.rfc-editor.org/info/rfc8446" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml">
+          <front>
+            <title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
+            <author fullname="E. Rescorla" initials="E." surname="Rescorla"/>
+            <date month="August" year="2018"/>
+            <abstract>
+              <t>This document specifies version 1.3 of the Transport Layer Security (TLS) protocol. TLS allows client/server applications to communicate over the Internet in a way that is designed to prevent eavesdropping, tampering, and message forgery.</t>
+              <t>This document updates RFCs 5705 and 6066, and obsoletes RFCs 5077, 5246, and 6961. This document also specifies new requirements for TLS 1.2 implementations.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8446"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8446"/>
+        </reference>
+      </references>
+      <references>
+        <name>Informative References</name>
+        <reference anchor="RFC5714" target="https://www.rfc-editor.org/info/rfc5714" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5714.xml">
+          <front>
+            <title>IP Fast Reroute Framework</title>
+            <author fullname="M. Shand" initials="M." surname="Shand"/>
+            <author fullname="S. Bryant" initials="S." surname="Bryant"/>
+            <date month="January" year="2010"/>
+            <abstract>
+              <t>This document provides a framework for the development of IP fast- reroute mechanisms that provide protection against link or router failure by invoking locally determined repair paths.  Unlike MPLS fast-reroute, the mechanisms are applicable to a network employing conventional IP routing and forwarding.  This document is not an Internet Standards Track specification; it is published for informational purposes.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="5714"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5714"/>
+        </reference>
+        <reference anchor="RFC8340" target="https://www.rfc-editor.org/info/rfc8340" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8340.xml">
+          <front>
+            <title>YANG Tree Diagrams</title>
+            <author fullname="M. Bjorklund" initials="M." surname="Bjorklund"/>
+            <author fullname="L. Berger" initials="L." role="editor" surname="Berger"/>
+            <date month="March" year="2018"/>
+            <abstract>
+              <t>This document captures the current syntax used in YANG module tree diagrams.  The purpose of this document is to provide a single location for this definition.  This syntax may be updated from time to time based on the evolution of the YANG language.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="215"/>
+          <seriesInfo name="RFC" value="8340"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8340"/>
+        </reference>
+        <reference anchor="RFC8792" target="https://www.rfc-editor.org/info/rfc8792" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8792.xml">
+          <front>
+            <title>Handling Long Lines in Content of Internet-Drafts and RFCs</title>
+            <author fullname="K. Watsen" initials="K." surname="Watsen"/>
+            <author fullname="E. Auerswald" initials="E." surname="Auerswald"/>
+            <author fullname="A. Farrel" initials="A." surname="Farrel"/>
+            <author fullname="Q. Wu" initials="Q." surname="Wu"/>
+            <date month="June" year="2020"/>
+            <abstract>
+              <t>This document defines two strategies for handling long lines in width-bounded text content.  One strategy, called the "single backslash" strategy, is based on the historical use of a single backslash ('\') character to indicate where line-folding has occurred, with the continuation occurring with the first character that is not a space character (' ') on the next line.  The second strategy, called the "double backslash" strategy, extends the first strategy by adding a second backslash character to identify where the continuation begins and is thereby able to handle cases not supported by the first strategy.  Both strategies use a self-describing header enabling automated reconstitution of the original content.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8792"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8792"/>
+        </reference>
+      </references>
+    </references>
+    <section anchor="full-tree" numbered="true" toc="default">
+      <name>Combined Tree Diagram</name>
+      <t>This appendix includes the combined ietf-routing.yang, ietf-ipv4-unicast-routing.yang,
+ietf-ipv6-unicast-routing.yang and ietf-rib-extensions.yang tree diagram.</t>
+      <artwork name="" type="" align="left" alt=""><![CDATA[
+module: ietf-routing
++--rw routing
++--rw router-id?                 yang:dotted-quad {router-id}?
++--ro interfaces
+|  +--ro interface*   if:interface-ref
++--rw control-plane-protocols
+|  +--rw control-plane-protocol* [type name]
+|     +--rw type             identityref
+|     +--rw name             string
+|     +--rw description?     string
+|     +--rw static-routes
+|        +--rw v4ur:ipv4
+|        |  +--rw v4ur:route* [destination-prefix]
+|        |     +--rw v4ur:destination-prefix    inet:ipv4-prefix
+|        |     +--rw v4ur:description?          string
+|        |     +--rw v4ur:next-hop
+|        |        +--rw (v4ur:next-hop-options)
+|        |           +--:(v4ur:simple-next-hop)
+|        |           |  +--rw v4ur:outgoing-interface?
+|        |           |  |   if:interface-ref
+|        |           |  +--rw v4ur:next-hop-address?
+|        |           |  |   inet:ipv4-address
+|        |           |  +--rw rib-ext:preference?        uint32
+|        |           |  +--rw rib-ext:tag?               uint32
+|        |           +--:(v4ur:special-next-hop)
+|        |           |  +--rw v4ur:special-next-hop?     enumeration
+|        |           +--:(v4ur:next-hop-list)
+|        |              +--rw v4ur:next-hop-list
+|        |                 +--rw v4ur:next-hop* [index]
+|        |                    +--rw v4ur:index                 string
+|        |                    +--rw v4ur:outgoing-interface?
+|        |                    |   if:interface-ref
+|        |                    +--rw v4ur:next-hop-address?
+|        |                    |   inet:ipv4-address
+|        |                    +--rw rib-ext:preference?        uint32
+|        |                    +--rw rib-ext:tag?               uint32
+|        +--rw v6ur:ipv6
+|           +--rw v6ur:route* [destination-prefix]
+|              +--rw v6ur:destination-prefix    inet:ipv6-prefix
+|              +--rw v6ur:description?          string
+|              +--rw v6ur:next-hop
+|                 +--rw (v6ur:next-hop-options)
+|                    +--:(v6ur:simple-next-hop)
+|                    |  +--rw v6ur:outgoing-interface?
+|                    |  |   if:interface-ref
+|                    |  +--rw v6ur:next-hop-address?
+|                    |  |   inet:ipv6-address
+|                    |  +--rw rib-ext:preference?        uint32
+|                    |  +--rw rib-ext:tag?               uint32
+|                    +--:(v6ur:special-next-hop)
+|                    |  +--rw v6ur:special-next-hop?     enumeration
+|                    +--:(v6ur:next-hop-list)
+|                       +--rw v6ur:next-hop-list
+|                          +--rw v6ur:next-hop* [index]
+|                             +--rw v6ur:index                 string
+|                             +--rw v6ur:outgoing-interface?
+|                             |   if:interface-ref
+|                             +--rw v6ur:next-hop-address?
+|                             |   inet:ipv6-address
+|                             +--rw rib-ext:preference?        uint32
+|                             +--rw rib-ext:tag?               uint32
++--rw ribs
+   +--rw rib* [name]
+      +--rw name                            string
+      +--rw address-family                  identityref
+      +--ro default-rib?                    boolean {multiple-ribs}?
+      +--ro routes
+      |  +--ro route* []
+      |     +--ro route-preference?          route-preference
+      |     +--ro next-hop
+      |     |  +--ro (next-hop-options)
+      |     |     +--:(simple-next-hop)
+      |     |     |  +--ro outgoing-interface?      if:interface-ref
+      |     |     |  +--ro v4ur:next-hop-address?   inet:ipv4-address
+      |     |     |  +--ro v6ur:next-hop-address?   inet:ipv6-address
+      |     |     |  +--ro rib-ext:repair-path
+      |     |     |     +--ro rib-ext:outgoing-interface?
+      |     |     |     |   if:interface-state-ref
+      |     |     |     +--ro rib-ext:next-hop-address?
+      |     |     |     |   inet:ip-address
+      |     |     |     +--ro rib-ext:metric?               uint32
+      |     |     +--:(special-next-hop)
+      |     |     |  +--ro special-next-hop?        enumeration
+      |     |     +--:(next-hop-list)
+      |     |        +--ro next-hop-list
+      |     |           +--ro next-hop* []
+      |     |              +--ro outgoing-interface?
+      |     |              |   if:interface-ref
+      |     |              +--ro v4ur:address?
+      |     |              |   inet:ipv4-address
+      |     |              +--ro v6ur:address?
+      |     |              |   inet:ipv6-address
+      |     |              +--ro rib-ext:repair-path
+      |     |                 +--ro rib-ext:outgoing-interface?
+      |     |                 |   if:interface-state-ref
+      |     |                 +--ro rib-ext:next-hop-address?
+      |     |                 |   inet:ip-address
+      |     |                 +--ro rib-ext:metric?            uint32
+      |     +--ro source-protocol            identityref
+      |     +--ro active?                    empty
+      |     +--ro last-updated?              yang:date-and-time
+      |     +--ro v4ur:destination-prefix?   inet:ipv4-prefix
+      |     +--ro v6ur:destination-prefix?   inet:ipv6-prefix
+      |     +--ro rib-ext:metric?            uint32
+      |     +--ro rib-ext:tag*               uint32
+      |     +--ro rib-ext:application-tag?   uint32
+      +---x active-route
+      |  +---w input
+      |  |  +---w v4ur:destination-address?   inet:ipv4-address
+      |  |  +---w v6ur:destination-address?   inet:ipv6-address
+      |  +--ro output
+      |     +--ro route
+      |        +--ro next-hop
+      |        |  +--ro (next-hop-options)
+      |        |     +--:(simple-next-hop)
+      |        |     |  +--ro outgoing-interface?    if:interface-ref
+      |        |     |  +--ro v4ur:next-hop-address?
+      |        |     |  |   inet:ipv4-address
+      |        |     |  +--ro v6ur:next-hop-address?
+      |        |     |  |   inet:ipv6-address
+      |        |     +--:(special-next-hop)
+      |        |     |  +--ro special-next-hop?        enumeration
+      |        |     +--:(next-hop-list)
+      |        |        +--ro next-hop-list
+      |        |           +--ro next-hop* []
+      |        |              +--ro outgoing-interface?
+      |        |              |   if:interface-ref
+      |        |              +--ro v4ur:next-hop-address?
+      |        |              |   inet:ipv4-address
+      |        |              +--ro v6ur:next-hop-address?
+      |        |              |   inet:ipv6-address
+      |        +--ro source-protocol            identityref
+      |        +--ro active?                    empty
+      |        +--ro last-updated?              yang:date-and-time
+      |        +--ro v4ur:destination-prefix?   inet:ipv4-prefix
+      |        +--ro v6ur:destination-prefix?   inet:ipv6-prefix
+      +--rw description?                      string
+      +--ro rib-ext:statistics
+         +--ro rib-ext:total-routes?              uint32
+         +--ro rib-ext:total-active-routes?       uint32
+         +--ro rib-ext:total-route-memory?        uint64
+         +--ro rib-ext:protocol-statistics* []
+            +--ro rib-ext:protocol?             identityref
+            +--ro rib-ext:routes?    uint32
+            +--ro rib-ext:active-routes?   uint32
+            +--ro rib-ext:route-memory?    uint64
+
+]]></artwork>
+    </section>
+    <section anchor="examples" numbered="true" toc="default">
+      <name>ietf-rib-extension.yang example</name>
+      <t>The following is an XML example using the RIB extension module
+  and RFC 8349.</t>
+      <t>Note: '\' line wrapping per <xref target="RFC8792" format="default"/>. </t>
+      <artwork name="" type="" align="left" alt=""><![CDATA[
+<routing xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
+  <control-plane-protocols>
+    <control-plane-protocol>
+      <type>static</type>
+      <name>static-routing-protocol</name>
+      <static-routes>
+        <ipv4 xmlns="urn:ietf:params:xml:ns:yang:\
+          ietf-ipv4-unicast-routing">
+          <route>
+            <destination-prefix>0.0.0.0/0</destination-prefix>
+            <next-hop>
+              <next-hop-address>192.0.2.2</next-hop-address>
+              <preference xmlns="urn:ietf:params:xml:ns:yang:\
+                ietf-rib-extension">30</preference>
+              <tag xmlns="urn:ietf:params:xml:ns:yang:\
+                ietf-rib-extension">99</tag>
+            </next-hop>
+          </route>
+        </ipv4>
+        <ipv6 xmlns="urn:ietf:params:xml:ns:yang:\
+          ietf-ipv6-unicast-routing">
+          <route>
+            <destination-prefix>::/0</destination-prefix>
+            <next-hop>
+             <next-hop-address>2001:db8:aaaa::1111</next-hop-address>
+             <preference xmlns="urn:ietf:params:xml:ns:yang:\
+               ietf-rib-extension">30</preference>
+             <tag xmlns="urn:ietf:params:xml:ns:yang:\
+               ietf-rib-extension">66</tag>
+            </next-hop>
+          </route>
+        </ipv6>
+      </static-routes>
+    </control-plane-protocol>
+  </control-plane-protocols>
+  <ribs>
+    <rib>
+      <name>ipv4-master</name>
+      <address-family xmlns:v4ur="urn:ietf:params:xml:ns:yang:\
+        ietf-ipv4-unicast-routing">v4ur:ipv4-unicast</address-family>
+      <default-rib>true</default-rib>
+      <routes>
+        <route>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv4-unicast-routing">0.0.0.0/0</destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv4-unicast-routing">192.0.2.2</next-hop-address>
+          </next-hop>
+          <route-preference>5</route-preference>
+          <source-protocol>static</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+        <route>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv4-unicast-routing">198.51.100.0/24\
+          </destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv4-unicast-routing">192.0.2.2</next-hop-address>
+            <repair-path xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-rib-extension">
+              <next-hop-address>203.0.113.1</next-hop-address>
+              <metric>200</metric>
+            </repair-path>
+          </next-hop>
+          <route-preference>110</route-preference>
+          <source-protocol xmlns:ospf="urn:ietf:params:xml:ns:yang:\
+            ietf-ospf">ospf:ospf</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+      </routes>
+    </rib>
+    <rib>
+      <name>ipv6-master</name>
+      <address-family xmlns:v6ur="urn:ietf:params:xml:ns:yang:\
+        ietf-ipv6-unicast-routing">v6ur:ipv6-unicast</address-family>
+      <default-rib>true</default-rib>
+      <routes>
+        <route>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv6-unicast-routing">0::/0</destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv6-unicast-routing">2001:db8:aaaa::1111\
+            </next-hop-address>
+          </next-hop>
+          <route-preference>5</route-preference>
+          <source-protocol>static</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+        <route>
+          <destination-prefix xmlns="urn:ietf:params:xml:ns:yang:\
+            ietf-ipv6-unicast-routing">2001:db8:bbbb::/64\
+          </destination-prefix>
+          <next-hop>
+            <next-hop-address xmlns="urn:ietf:params:xml:ns:yang:\
+              ietf-ipv6-unicast-routing">2001:db8:aaaa::1111\
+            </next-hop-address>
+            <repair-path xmlns="urn:ietf:params:xml:ns:yang:\
+             ietf-rib-extension">
+             <next-hop-address>2001:db8:cccc::2222</next-hop-address>
+             <metric>200</metric>
+            </repair-path>
+          </next-hop>
+          <route-preference>110</route-preference>
+          <source-protocol xmlns:ospf="urn:ietf:params:xml:ns:yang:\
+            ietf-ospf">ospf:ospf</source-protocol>
+          <last-updated>2015-10-24T18:02:45+02:00</last-updated>
+        </route>
+      </routes>
+    </rib>
+  </ribs>
+</routing>
+
+  ]]></artwork>
+      <t>The following is the same example using JSON format.</t>
+      <artwork name="" type="" align="left" alt=""><![CDATA[
+{
+ "ietf-routing:routing": {
+   "control-plane-protocols": {
+     "control-plane-protocol": [
+       {
+         "type": "static",
+         "name": "static-routing-protocol",
+         "static-routes": {
+           "ietf-ipv4-unicast-routing:ipv4": {
+             "route": [
+               {
+                 "destination-prefix": "0.0.0.0/0",
+                 "next-hop": {
+                   "next-hop-address": "192.0.2.2",
+                   "ietf-rib-extension:preference": 30,
+                   "ietf-rib-extension:tag": 99
+                 }
+               }
+             ]
+           },
+           "ietf-ipv6-unicast-routing:ipv6": {
+             "route": [
+               {
+                 "destination-prefix": "::/0",
+                 "next-hop": {
+                   "next-hop-address": "2001:db8:aaaa::1111",
+                   "ietf-rib-extension:preference": 30,
+                   "ietf-rib-extension:tag": 66
+                 }
+               }
+             ]
+           }
+         }
+       }
+     ]
+   },
+   "ribs": {
+     "rib": [
+       {
+         "name": "ipv4-master",
+         "address-family": "ietf-ipv4-unicast-routing:ipv4-unicast",
+         "default-rib": true,
+         "routes": {
+           "route": [
+             {
+               "next-hop": {
+                 "ietf-ipv4-unicast-routing:next-hop-address": \
+                 "192.0.2.2"
+               },
+               "route-preference": 5,
+               "source-protocol": "static",
+               "last-updated": "2015-10-24T18:02:45+02:00",
+               "ietf-ipv4-unicast-routing:destination-prefix": \
+               "0.0.0.0/0"
+             },
+             {
+               "next-hop": {
+                 "ietf-rib-extension:repair-path": {
+                   "next-hop-address": "203.0.113.1",
+                   "metric": 200
+                 },
+                 "ietf-ipv4-unicast-routing:next-hop-address": \
+                 "192.0.2.2"
+               },
+               "route-preference": 110,
+               "source-protocol": "ietf-ospf:ospf",
+               "last-updated": "2015-10-24T18:02:45+02:00",
+               "ietf-ipv4-unicast-routing:destination-prefix": \
+               "198.51.100.0/24"
+             }
+           ]
+         }
+       },
+       {
+         "name": "ipv6-master",
+         "address-family": "ietf-ipv6-unicast-routing:ipv6-unicast",
+         "default-rib": true,
+         "routes": {
+           "route": [
+             {
+               "next-hop": {
+                 "ietf-ipv6-unicast-routing:next-hop-address": \
+                 "2001:db8:aaaa::1111"
+               },
+               "route-preference": 5,
+               "source-protocol": "static",
+               "last-updated": "2015-10-24T18:02:45+02:00",
+               "ietf-ipv6-unicast-routing:destination-prefix": "::/0"
+             },
+             {
+               "next-hop": {
+                 "ietf-rib-extension:repair-path": {
+                   "next-hop-address": "2001:db8:cccc::2222",
+                   "metric": 200
+                 },
+                 "ietf-ipv6-unicast-routing:next-hop-address": \
+                 "2001:db8:aaaa::1111"
+               },
+               "route-preference": 110,
+               "source-protocol": "ietf-ospf:ospf",
+               "last-updated": "2015-10-24T18:02:45+02:00",
+               "ietf-ipv6-unicast-routing:destination-prefix": \
+               "2001:db8:bbbb::/64"
+             }
+           ]
+         }
+       }
+     ]
+   }
+ }
+}
+
+  ]]></artwork>
+    </section>
+    <section numbered="true" toc="default">
+      <name>Acknowledgments</name>
+      <t>The RFC text was produced using Marshall Rose's xml2rfc tool.</t>
+      <t>The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
+     for their helpful comments and suggestions.</t>
+      <t>The authors wish to thank Tom Petch, Rob Wilton and Chris Hopps for
+     their reviews and comments.</t>
+    </section>
+  </back>
+</rfc>
