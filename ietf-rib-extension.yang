@@ -66,7 +66,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-04-27 {
+  revision 2023-05-01 {
     description
       "Initial Version";
     reference
@@ -340,7 +340,7 @@ module ietf-rib-extension {
     + "rt:next-hop-list/rt:next-hop-list/rt:next-hop"
   {
     description
-      "Augment the multiple next hops with repair path.";
+      "Augment the next-hop with a repair path.";
     uses repair-path;
   }
 }
