@@ -12,11 +12,11 @@
 <?rfc sortrefs="yes"?>
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-16" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true" version="3" consensus="true">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-17" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true" version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-16"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-17"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
       <organization>LabN</organization>
       <address>
@@ -242,7 +242,7 @@ and is shown in the following tree snapshot.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-04-27.yang" type="" markers="true"><![CDATA[
+      <sourcecode name="ietf-rib-extension@2023-05-01.yang" type="" markers="true"><![CDATA[
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -291,8 +291,8 @@ module ietf-rib-extension {
                <mailto:yingzhen.qu@futurewei.com>";
 
   description
-    "This document defines a YANG data model which extends
-     the RIBs defined in ietf-routing YANG module with more
+    "This document defines a YANG data model which extends 
+     the RIBs defined in ietf-routing YANG module with more 
      route attributes.
 
      This YANG model conforms to the Network Management
@@ -311,7 +311,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-04-27 {
+  revision 2023-05-01 {
     description
       "Initial Version";
     reference
@@ -585,7 +585,7 @@ module ietf-rib-extension {
     + "rt:next-hop-list/rt:next-hop-list/rt:next-hop"
   {
     description
-      "Augment the multiple next hops with repair path.";
+      "Augment the next-hop with a repair path.";
     uses repair-path;
   }
 }
