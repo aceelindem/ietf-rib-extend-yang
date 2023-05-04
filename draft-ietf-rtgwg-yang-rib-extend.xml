@@ -12,13 +12,16 @@
 <?rfc sortrefs="yes"?>
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-17" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true" version="3" consensus="true">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
+     docName="draft-ietf-rtgwg-yang-rib-extend-18" obsoletes="" updates=""
+     submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
+     version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-17"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-18"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
-      <organization>LabN</organization>
+      <organization>LabN Consulting LLC</organization>
       <address>
         <postal>
           <street>301 Midenhall Way</street>
@@ -58,16 +61,16 @@
     <section numbered="true" toc="default">
       <name>Introduction</name>
       <t>This document defines a YANG <xref target="RFC7950" format="default"/>
-  data model which extends the RIBs defined in ietf-routing YANG module
+  data model which extends the RIB defined in the ietf-routing YANG module
   <xref target="RFC8349" format="default"/> with more route attributes.</t>
       <t>A RIB is a collection of routes with attributes controlled and
   manipulated by control-plane protocols. Each RIB contains only routes
   of one address family <xref target="RFC8349" format="default"/>. Within a protocol,
 routes are selected based on the metrics in use by that protocol, and
-the protocol installs the routes to RIB. RIB selects the preferred routes
-by comparing the route-preference (aka, administrative distance) of
-the associated protocol.</t>
-      <t>The module defined in this document extends the RIBs to support more
+the protocol installs the routes to RIB. The RIB selects the preferred or active
+route by comparing the route-preference (aka, administrative distance) of
+the candidate routes installed different protocols.</t>
+      <t>The module defined in this document extends the RIB to support more
 route attributes, such as multiple next-hops, route metrics, and
 administrative tags.</t>
       <t> The YANG modules in this document conform to the Network Management
@@ -211,11 +214,11 @@ reachable static route.</t>
       </section>
       <section numbered="true" toc="default">
         <name>Repair Path</name>
-        <t>The IP Fast Reroute (IPFRR) pre-computes repair
-paths by routing protocols <xref target="RFC5714" format="default"/>, and the repair
-paths are installed in the RIB.</t>
-        <t>Each route in the RIB is augmented with repair paths if available,
-and is shown in the following tree snapshot.</t>
+        <t>The IP Fast Reroute (IPFRR) calculation by routing protocol
+        pre-computes repair paths <xref target="RFC5714" format="default"/>, and the repair
+        paths are installed in the RIB.</t>
+        <t>Each route next-hop in the RIB is augmented with a repair path,
+        and is shown in the following tree snapshot.</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
 
   augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
@@ -242,7 +245,7 @@ and is shown in the following tree snapshot.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-05-01.yang" type="" markers="true"><![CDATA[
+      <sourcecode name="ietf-rib-extension@2023-05-04.yang" type="" markers="true"><![CDATA[
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -291,11 +294,10 @@ module ietf-rib-extension {
                <mailto:yingzhen.qu@futurewei.com>";
 
   description
-    "This document defines a YANG data model which extends 
-     the RIBs defined in ietf-routing YANG module with more 
-     route attributes.
+    "This YANG module extends the RIB defined in the ietf-routing
+     YANG module with additionalroute attributes.
 
-     This YANG model conforms to the Network Management
+     This YANG module conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
 
      Copyright (c) 2023 IETF Trust and the persons identified as
@@ -311,7 +313,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-05-01 {
+  revision 2023-05-04 {
     description
       "Initial Version";
     reference
@@ -329,14 +331,14 @@ module ietf-rib-extension {
       leaf total-routes {
         type uint32;
         description
-          "Total routes in the RIB";
+          "Total number of routes in the RIB";
       }
       leaf total-active-routes {
         type uint32;
         description
-          "Total active routes in the RIB. An active route is
-           preferred over other routes to the same destination
-           prefix.";
+          "Total number of active routes in the RIB. An active
+           route is the route that is preferred over other routes
+           to the same destination prefix.";
       }
       leaf total-route-memory {
         type uint64;
@@ -345,30 +347,36 @@ module ietf-rib-extension {
           "Total memory for all routes in the RIB.";
       }
       list protocol-statistics {
-        description "RIB statistics per protocol.";
+        description
+          "RIB statistics for routing protocols installing
+           routes in the RIB.";
         leaf protocol {
           type identityref {
             base rt:routing-protocol;
           }
-          description "Routing protocol.";
+          description
+            "Routing protocol installing routes in the RIB.";
         }
         leaf routes {
           type uint32;
           description
-            "Total routes for protocol in the RIB.";
+            "Total number of routes in the RIB for the routing
+             protocol identified by the 'protocol'.";
         }
         leaf active-routes {
           type uint32;
           description
-            "Total active routes for protocol in the RIB. An active
-             route is preferred over other routes to the same
-             destination prefix.";
+            "Total number of active routes in the RIB for the routing
+             protocol for the routing protocol identified by the
+             'protocol'. An active route is preferred over other
+             routes to the same destination prefix.";
         }
         leaf route-memory {
           type uint64;
           units "bytes";
           description
-            "Total memory for all routes for protocol in the RIB.";
+            "Total memory for all routes in the RIB for the routing
+             protocol identified by the 'protocol'.";
         }
       }
     }
@@ -589,7 +597,7 @@ module ietf-rib-extension {
     uses repair-path;
   }
 }
-]]></sourcecode>
+       ]]></sourcecode>
     </section>
     <section numbered="true" toc="default">
       <name>Security Considerations</name>
@@ -1314,10 +1322,14 @@ module: ietf-routing
     <section numbered="true" toc="default">
       <name>Acknowledgments</name>
       <t>The RFC text was produced using Marshall Rose's xml2rfc tool.</t>
-      <t>The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
-     for their helpful comments and suggestions.</t>
-      <t>The authors wish to thank Tom Petch, Rob Wilton and Chris Hopps for
-     their reviews and comments.</t>
+      <t>
+        The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
+        for their helpful comments and suggestions.
+      </t>
+      <t>
+        The authors wish to thank Tom Petch, Rob Wilton, Chris Hopps, and Martin
+        Bjorklund for their reviews and comments.
+      </t>
     </section>
   </back>
 </rfc>
