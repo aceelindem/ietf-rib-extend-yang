@@ -13,13 +13,13 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
-     docName="draft-ietf-rtgwg-yang-rib-extend-19" obsoletes="" updates=""
+     docName="draft-ietf-rtgwg-yang-rib-extend-20" obsoletes="" updates=""
      submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
      version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-19"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-20"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
       <organization>LabN Consulting LLC</organization>
       <address>
@@ -52,7 +52,7 @@
       <t>A Routing Information Base (RIB) is a list of routes and their
         corresponding administrative data and operational state.</t>
       <t>RFC 8349 defines the
-     basic building blocks for RIB, and this model augments it to support
+     basic building blocks for the RIB data model, and this model augments it to support
      multiple next-hops (aka, paths) for each route as well as additional
      attributes.</t>
     </abstract>
@@ -61,7 +61,7 @@
     <section numbered="true" toc="default">
       <name>Introduction</name>
       <t>This document defines a YANG <xref target="RFC7950" format="default"/>
-  data model which extends the RIB defined in the ietf-routing YANG module
+  data model which extends the RIB data model defined in the ietf-routing YANG module
   <xref target="RFC8349" format="default"/> with more route attributes.</t>
       <t>A RIB is a collection of routes with attributes controlled and
   manipulated by control-plane protocols. Each RIB contains only routes
@@ -225,14 +225,14 @@ reachable static route.</t>
           /rt:next-hop/rt:next-hop-options/rt:simple-next-hop:
     +--ro repair-path
        +--ro outgoing-interface?   if:interface-state-ref
-       +--ro next-hop-address?     inet:ip-address
+       +--ro next-hop-address?     inet:ip-address-no-zone
        +--ro metric?               uint32
   augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
           /rt:next-hop/rt:next-hop-options/rt:next-hop-list
           /rt:next-hop-list/rt:next-hop:
     +--ro repair-path
        +--ro outgoing-interface?   if:interface-state-ref
-       +--ro next-hop-address?     inet:ip-address
+       +--ro next-hop-address?     inet:ip-address-no-zone
        +--ro metric?               uint32
 ]]></artwork>
       </section>
@@ -245,7 +245,7 @@ reachable static route.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-05-04.yang" type="" markers="true"><![CDATA[
+      <sourcecode name="ietf-rib-extension@2023-05-24.yang" type="" markers="true"><![CDATA[
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -313,7 +313,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-05-04 {
+  revision 2023-05-24 {
     description
       "Initial Version";
     reference
@@ -391,7 +391,7 @@ module ietf-rib-extension {
         "Outgoing interface";
     }
     leaf address {
-      type inet:ip-address;
+      type inet:ip-address-no-zone;
       description
         "IPv4 or IPv6 Address of the next-hop.";
     }
@@ -441,7 +441,7 @@ module ietf-rib-extension {
           "Name of the outgoing interface.";
       }
       leaf next-hop-address {
-        type inet:ip-address;
+        type inet:ip-address-no-zone;
         description
           "IP address of the next hop.";
       }
@@ -597,7 +597,7 @@ module ietf-rib-extension {
     uses repair-path;
   }
 }
-       ]]></sourcecode>
+      ]]></sourcecode>
     </section>
     <section numbered="true" toc="default">
       <name>Security Considerations</name>
@@ -1011,7 +1011,7 @@ module: ietf-routing
       |     |     |     +--ro rib-ext:outgoing-interface?
       |     |     |     |   if:interface-state-ref
       |     |     |     +--ro rib-ext:next-hop-address?
-      |     |     |     |   inet:ip-address
+      |     |     |     |   inet:ip-address-no-zone
       |     |     |     +--ro rib-ext:metric?               uint32
       |     |     +--:(special-next-hop)
       |     |     |  +--ro special-next-hop?        enumeration
@@ -1028,7 +1028,7 @@ module: ietf-routing
       |     |                 +--ro rib-ext:outgoing-interface?
       |     |                 |   if:interface-state-ref
       |     |                 +--ro rib-ext:next-hop-address?
-      |     |                 |   inet:ip-address
+      |     |                 |   inet:ip-address-no-zone
       |     |                 +--ro rib-ext:metric?            uint32
       |     +--ro source-protocol            identityref
       |     +--ro active?                    empty
