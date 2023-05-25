@@ -13,13 +13,13 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
-     docName="draft-ietf-rtgwg-yang-rib-extend-20" obsoletes="" updates=""
+     docName="draft-ietf-rtgwg-yang-rib-extend-21" obsoletes="" updates=""
      submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
      version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-20"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-21"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
       <organization>LabN Consulting LLC</organization>
       <address>
@@ -78,11 +78,6 @@ Datastore Architecture (NMDA) [RFC8342].</t>
     </section>
     <section numbered="true" toc="default">
       <name>Terminology and Notation</name>
-      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-     NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
-     "MAY", and "OPTIONAL" in this document are to be interpreted as
-     described in BCP 14 <xref target="RFC2119" format="default"/> <xref target="RFC8174" format="default"/>
-     when, and only when, they appear in all capitals, as shown here.</t>
       <t>The following terms are defined in <xref target="RFC8342" format="default"/>:
       </t>
       <ul spacing="normal">
@@ -687,21 +682,6 @@ module ietf-rib-extension {
       <name>References</name>
       <references>
         <name>Normative References</name>
-        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" xml:base="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml">
-          <front>
-            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
-            <author initials="S." surname="Bradner" fullname="S. Bradner">
-              <organization/>
-            </author>
-            <date year="1997" month="March"/>
-            <abstract>
-              <t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
-            </abstract>
-          </front>
-          <seriesInfo name="BCP" value="14"/>
-          <seriesInfo name="RFC" value="2119"/>
-          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
-        </reference>
         <reference anchor="RFC3688" target="https://www.rfc-editor.org/info/rfc3688" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3688.xml">
           <front>
             <title>The IETF XML Registry</title>
@@ -791,21 +771,6 @@ module ietf-rib-extension {
           </front>
           <seriesInfo name="RFC" value="8040"/>
           <seriesInfo name="DOI" value="10.17487/RFC8040"/>
-        </reference>
-        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" xml:base="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml">
-          <front>
-            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
-            <author initials="B." surname="Leiba" fullname="B. Leiba">
-              <organization/>
-            </author>
-            <date year="2017" month="May"/>
-            <abstract>
-              <t>RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
-            </abstract>
-          </front>
-          <seriesInfo name="BCP" value="14"/>
-          <seriesInfo name="RFC" value="8174"/>
-          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
         </reference>
         <reference anchor="RFC8341" target="https://www.rfc-editor.org/info/rfc8341" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8341.xml">
           <front>
@@ -1124,7 +1089,7 @@ module: ietf-routing
   </control-plane-protocols>
   <ribs>
     <rib>
-      <name>ipv4-master</name>
+      <name>ipv4-primary</name>
       <address-family xmlns:v4ur="urn:ietf:params:xml:ns:yang:\
         ietf-ipv4-unicast-routing">v4ur:ipv4-unicast</address-family>
       <default-rib>true</default-rib>
@@ -1161,7 +1126,7 @@ module: ietf-routing
       </routes>
     </rib>
     <rib>
-      <name>ipv6-master</name>
+      <name>ipv6-primary</name>
       <address-family xmlns:v6ur="urn:ietf:params:xml:ns:yang:\
         ietf-ipv6-unicast-routing">v6ur:ipv6-unicast</address-family>
       <default-rib>true</default-rib>
@@ -1244,7 +1209,7 @@ module: ietf-routing
    "ribs": {
      "rib": [
        {
-         "name": "ipv4-master",
+         "name": "ipv4-primary",
          "address-family": "ietf-ipv4-unicast-routing:ipv4-unicast",
          "default-rib": true,
          "routes": {
@@ -1279,7 +1244,7 @@ module: ietf-routing
          }
        },
        {
-         "name": "ipv6-master",
+         "name": "ipv6-primary",
          "address-family": "ietf-ipv6-unicast-routing:ipv6-unicast",
          "default-rib": true,
          "routes": {
