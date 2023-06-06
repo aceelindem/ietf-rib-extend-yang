@@ -13,13 +13,13 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
-     docName="draft-ietf-rtgwg-yang-rib-extend-21" obsoletes="" updates=""
+     docName="draft-ietf-rtgwg-yang-rib-extend-22" obsoletes="" updates=""
      submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
      version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-21"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-22"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
       <organization>LabN Consulting LLC</organization>
       <address>
@@ -240,7 +240,7 @@ reachable static route.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-05-24.yang" type="" markers="true"><![CDATA[
+      <sourcecode name="ietf-rib-extension@2023-06-06.yang" type="" markers="true"><![CDATA[
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -290,7 +290,7 @@ module ietf-rib-extension {
 
   description
     "This YANG module extends the RIB defined in the ietf-routing
-     YANG module with additionalroute attributes.
+     YANG module with additional route attributes.
 
      This YANG module conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
@@ -308,7 +308,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-05-24 {
+  revision 2023-06-06 {
     description
       "Initial Version";
     reference
@@ -374,21 +374,6 @@ module ietf-rib-extension {
              protocol identified by the 'protocol'.";
         }
       }
-    }
-  }
-
-  grouping next-hop {
-    description
-      "Next-hop grouping";
-    leaf interface {
-      type if:interface-ref;
-      description
-        "Outgoing interface";
-    }
-    leaf address {
-      type inet:ip-address-no-zone;
-      description
-        "IPv4 or IPv6 Address of the next-hop.";
     }
   }
 
@@ -592,6 +577,7 @@ module ietf-rib-extension {
     uses repair-path;
   }
 }
+
       ]]></sourcecode>
     </section>
     <section numbered="true" toc="default">
@@ -1292,8 +1278,9 @@ module: ietf-routing
         for their helpful comments and suggestions.
       </t>
       <t>
-        The authors wish to thank Tom Petch, Rob Wilton, Chris Hopps, and Martin
-        Bjorklund for their reviews and comments.
+        The authors wish to thank Tom Petch, Rob Wilton, Chris Hopps, Martin
+        Bjorklund, Jeffrey Zhang, Eric Vyncke, Lars Eggert, and Bo Wu for
+        their reviews and comments.
       </t>
     </section>
   </back>
