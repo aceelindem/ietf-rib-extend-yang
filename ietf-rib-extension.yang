@@ -319,8 +319,14 @@ module ietf-rib-extension {
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
-    + "rt:routes/rt:route"
-  {
+    + "rt:routes/rt:route" {
+    when "not(derived-from(rt:source-protocol, 'ospf')) "
+       + "and not(derived-from(rt:source-protocol, 'isis'))" {
+      description
+        "This augmentation is only valid for routes whose
+         source protocol is not OSPF or ISIS.";
+    }
+  
     description
       "Augment a route in RIB with attributes.";
     uses attributes;
