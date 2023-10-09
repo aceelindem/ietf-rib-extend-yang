@@ -12,13 +12,16 @@
 <?rfc sortrefs="yes"?>
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902" docName="draft-ietf-rtgwg-yang-rib-extend-16" obsoletes="" updates="" submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true" version="3" consensus="true">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
+     docName="draft-ietf-rtgwg-yang-rib-extend-22" obsoletes="" updates=""
+     submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
+     version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-16"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-22"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
-      <organization>LabN</organization>
+      <organization>LabN Consulting LLC</organization>
       <address>
         <postal>
           <street>301 Midenhall Way</street>
@@ -49,7 +52,7 @@
       <t>A Routing Information Base (RIB) is a list of routes and their
         corresponding administrative data and operational state.</t>
       <t>RFC 8349 defines the
-     basic building blocks for RIB, and this model augments it to support
+     basic building blocks for the RIB data model, and this model augments it to support
      multiple next-hops (aka, paths) for each route as well as additional
      attributes.</t>
     </abstract>
@@ -58,16 +61,16 @@
     <section numbered="true" toc="default">
       <name>Introduction</name>
       <t>This document defines a YANG <xref target="RFC7950" format="default"/>
-  data model which extends the RIBs defined in ietf-routing YANG module
+  data model which extends the RIB data model defined in the ietf-routing YANG module
   <xref target="RFC8349" format="default"/> with more route attributes.</t>
       <t>A RIB is a collection of routes with attributes controlled and
   manipulated by control-plane protocols. Each RIB contains only routes
   of one address family <xref target="RFC8349" format="default"/>. Within a protocol,
 routes are selected based on the metrics in use by that protocol, and
-the protocol installs the routes to RIB. RIB selects the preferred routes
-by comparing the route-preference (aka, administrative distance) of
-the associated protocol.</t>
-      <t>The module defined in this document extends the RIBs to support more
+the protocol installs the routes to RIB. The RIB selects the preferred or active
+route by comparing the route-preference (aka, administrative distance) of
+the candidate routes installed different protocols.</t>
+      <t>The module defined in this document extends the RIB to support more
 route attributes, such as multiple next-hops, route metrics, and
 administrative tags.</t>
       <t> The YANG modules in this document conform to the Network Management
@@ -75,11 +78,6 @@ Datastore Architecture (NMDA) [RFC8342].</t>
     </section>
     <section numbered="true" toc="default">
       <name>Terminology and Notation</name>
-      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-     NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
-     "MAY", and "OPTIONAL" in this document are to be interpreted as
-     described in BCP 14 <xref target="RFC2119" format="default"/> <xref target="RFC8174" format="default"/>
-     when, and only when, they appear in all capitals, as shown here.</t>
       <t>The following terms are defined in <xref target="RFC8342" format="default"/>:
       </t>
       <ul spacing="normal">
@@ -211,25 +209,25 @@ reachable static route.</t>
       </section>
       <section numbered="true" toc="default">
         <name>Repair Path</name>
-        <t>The IP Fast Reroute (IPFRR) pre-computes repair
-paths by routing protocols <xref target="RFC5714" format="default"/>, and the repair
-paths are installed in the RIB.</t>
-        <t>Each route in the RIB is augmented with repair paths if available,
-and is shown in the following tree snapshot.</t>
+        <t>The IP Fast Reroute (IPFRR) calculation by routing protocol
+        pre-computes repair paths <xref target="RFC5714" format="default"/>, and the repair
+        paths are installed in the RIB.</t>
+        <t>Each route next-hop in the RIB is augmented with a repair path,
+        and is shown in the following tree snapshot.</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
 
   augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
           /rt:next-hop/rt:next-hop-options/rt:simple-next-hop:
     +--ro repair-path
        +--ro outgoing-interface?   if:interface-state-ref
-       +--ro next-hop-address?     inet:ip-address
+       +--ro next-hop-address?     inet:ip-address-no-zone
        +--ro metric?               uint32
   augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
           /rt:next-hop/rt:next-hop-options/rt:next-hop-list
           /rt:next-hop-list/rt:next-hop:
     +--ro repair-path
        +--ro outgoing-interface?   if:interface-state-ref
-       +--ro next-hop-address?     inet:ip-address
+       +--ro next-hop-address?     inet:ip-address-no-zone
        +--ro metric?               uint32
 ]]></artwork>
       </section>
@@ -242,7 +240,7 @@ and is shown in the following tree snapshot.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-04-27.yang" type="" markers="true"><![CDATA[
+      <sourcecode name="ietf-rib-extension@2023-06-06.yang" type="" markers="true"><![CDATA[
 module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -291,11 +289,10 @@ module ietf-rib-extension {
                <mailto:yingzhen.qu@futurewei.com>";
 
   description
-    "This document defines a YANG data model which extends
-     the RIBs defined in ietf-routing YANG module with more
-     route attributes.
+    "This YANG module extends the RIB defined in the ietf-routing
+     YANG module with additional route attributes.
 
-     This YANG model conforms to the Network Management
+     This YANG module conforms to the Network Management
      Datastore Architecture (NDMA) as described in RFC 8342.
 
      Copyright (c) 2023 IETF Trust and the persons identified as
@@ -311,7 +308,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-04-27 {
+  revision 2023-06-06 {
     description
       "Initial Version";
     reference
@@ -329,14 +326,14 @@ module ietf-rib-extension {
       leaf total-routes {
         type uint32;
         description
-          "Total routes in the RIB";
+          "Total number of routes in the RIB";
       }
       leaf total-active-routes {
         type uint32;
         description
-          "Total active routes in the RIB. An active route is
-           preferred over other routes to the same destination
-           prefix.";
+          "Total number of active routes in the RIB. An active
+           route is the route that is preferred over other routes
+           to the same destination prefix.";
       }
       leaf total-route-memory {
         type uint64;
@@ -345,47 +342,38 @@ module ietf-rib-extension {
           "Total memory for all routes in the RIB.";
       }
       list protocol-statistics {
-        description "RIB statistics per protocol.";
+        description
+          "RIB statistics for routing protocols installing
+           routes in the RIB.";
         leaf protocol {
           type identityref {
             base rt:routing-protocol;
           }
-          description "Routing protocol.";
+          description
+            "Routing protocol installing routes in the RIB.";
         }
         leaf routes {
           type uint32;
           description
-            "Total routes for protocol in the RIB.";
+            "Total number of routes in the RIB for the routing
+             protocol identified by the 'protocol'.";
         }
         leaf active-routes {
           type uint32;
           description
-            "Total active routes for protocol in the RIB. An active
-             route is preferred over other routes to the same
-             destination prefix.";
+            "Total number of active routes in the RIB for the routing
+             protocol for the routing protocol identified by the
+             'protocol'. An active route is preferred over other
+             routes to the same destination prefix.";
         }
         leaf route-memory {
           type uint64;
           units "bytes";
           description
-            "Total memory for all routes for protocol in the RIB.";
+            "Total memory for all routes in the RIB for the routing
+             protocol identified by the 'protocol'.";
         }
       }
-    }
-  }
-
-  grouping next-hop {
-    description
-      "Next-hop grouping";
-    leaf interface {
-      type if:interface-ref;
-      description
-        "Outgoing interface";
-    }
-    leaf address {
-      type inet:ip-address;
-      description
-        "IPv4 or IPv6 Address of the next-hop.";
     }
   }
 
@@ -401,7 +389,7 @@ module ietf-rib-extension {
          a lower metric installed by the same routing protocol
          are lower cost to reach and are preferable to routes
          with a higher metric. However, metrics from different
-         routing protocols are not directly comparable.";
+         routing protocols are not comparable.";
     }
     leaf-list tag {
       type uint32;
@@ -433,7 +421,7 @@ module ietf-rib-extension {
           "Name of the outgoing interface.";
       }
       leaf next-hop-address {
-        type inet:ip-address;
+        type inet:ip-address-no-zone;
         description
           "IP address of the next hop.";
       }
@@ -585,11 +573,12 @@ module ietf-rib-extension {
     + "rt:next-hop-list/rt:next-hop-list/rt:next-hop"
   {
     description
-      "Augment the multiple next hops with repair path.";
+      "Augment the next-hop with a repair path.";
     uses repair-path;
   }
 }
-]]></sourcecode>
+
+      ]]></sourcecode>
     </section>
     <section numbered="true" toc="default">
       <name>Security Considerations</name>
@@ -679,21 +668,6 @@ module ietf-rib-extension {
       <name>References</name>
       <references>
         <name>Normative References</name>
-        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" xml:base="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml">
-          <front>
-            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
-            <author initials="S." surname="Bradner" fullname="S. Bradner">
-              <organization/>
-            </author>
-            <date year="1997" month="March"/>
-            <abstract>
-              <t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
-            </abstract>
-          </front>
-          <seriesInfo name="BCP" value="14"/>
-          <seriesInfo name="RFC" value="2119"/>
-          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
-        </reference>
         <reference anchor="RFC3688" target="https://www.rfc-editor.org/info/rfc3688" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3688.xml">
           <front>
             <title>The IETF XML Registry</title>
@@ -783,21 +757,6 @@ module ietf-rib-extension {
           </front>
           <seriesInfo name="RFC" value="8040"/>
           <seriesInfo name="DOI" value="10.17487/RFC8040"/>
-        </reference>
-        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" xml:base="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml">
-          <front>
-            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
-            <author initials="B." surname="Leiba" fullname="B. Leiba">
-              <organization/>
-            </author>
-            <date year="2017" month="May"/>
-            <abstract>
-              <t>RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
-            </abstract>
-          </front>
-          <seriesInfo name="BCP" value="14"/>
-          <seriesInfo name="RFC" value="8174"/>
-          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
         </reference>
         <reference anchor="RFC8341" target="https://www.rfc-editor.org/info/rfc8341" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8341.xml">
           <front>
@@ -1003,7 +962,7 @@ module: ietf-routing
       |     |     |     +--ro rib-ext:outgoing-interface?
       |     |     |     |   if:interface-state-ref
       |     |     |     +--ro rib-ext:next-hop-address?
-      |     |     |     |   inet:ip-address
+      |     |     |     |   inet:ip-address-no-zone
       |     |     |     +--ro rib-ext:metric?               uint32
       |     |     +--:(special-next-hop)
       |     |     |  +--ro special-next-hop?        enumeration
@@ -1020,7 +979,7 @@ module: ietf-routing
       |     |                 +--ro rib-ext:outgoing-interface?
       |     |                 |   if:interface-state-ref
       |     |                 +--ro rib-ext:next-hop-address?
-      |     |                 |   inet:ip-address
+      |     |                 |   inet:ip-address-no-zone
       |     |                 +--ro rib-ext:metric?            uint32
       |     +--ro source-protocol            identityref
       |     +--ro active?                    empty
@@ -1116,7 +1075,7 @@ module: ietf-routing
   </control-plane-protocols>
   <ribs>
     <rib>
-      <name>ipv4-master</name>
+      <name>ipv4-primary</name>
       <address-family xmlns:v4ur="urn:ietf:params:xml:ns:yang:\
         ietf-ipv4-unicast-routing">v4ur:ipv4-unicast</address-family>
       <default-rib>true</default-rib>
@@ -1153,7 +1112,7 @@ module: ietf-routing
       </routes>
     </rib>
     <rib>
-      <name>ipv6-master</name>
+      <name>ipv6-primary</name>
       <address-family xmlns:v6ur="urn:ietf:params:xml:ns:yang:\
         ietf-ipv6-unicast-routing">v6ur:ipv6-unicast</address-family>
       <default-rib>true</default-rib>
@@ -1236,7 +1195,7 @@ module: ietf-routing
    "ribs": {
      "rib": [
        {
-         "name": "ipv4-master",
+         "name": "ipv4-primary",
          "address-family": "ietf-ipv4-unicast-routing:ipv4-unicast",
          "default-rib": true,
          "routes": {
@@ -1271,7 +1230,7 @@ module: ietf-routing
          }
        },
        {
-         "name": "ipv6-master",
+         "name": "ipv6-primary",
          "address-family": "ietf-ipv6-unicast-routing:ipv6-unicast",
          "default-rib": true,
          "routes": {
@@ -1314,10 +1273,15 @@ module: ietf-routing
     <section numbered="true" toc="default">
       <name>Acknowledgments</name>
       <t>The RFC text was produced using Marshall Rose's xml2rfc tool.</t>
-      <t>The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
-     for their helpful comments and suggestions.</t>
-      <t>The authors wish to thank Tom Petch, Rob Wilton and Chris Hopps for
-     their reviews and comments.</t>
+      <t>
+        The authors wish to thank Les Ginsberg, Krishna Deevi, and Suyoung Yoon
+        for their helpful comments and suggestions.
+      </t>
+      <t>
+        The authors wish to thank Tom Petch, Rob Wilton, Chris Hopps, Martin
+        Bjorklund, Jeffrey Zhang, Eric Vyncke, Lars Eggert, and Bo Wu for
+        their reviews and comments.
+      </t>
     </section>
   </back>
 </rfc>
