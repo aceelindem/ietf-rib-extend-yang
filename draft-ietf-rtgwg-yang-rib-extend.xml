@@ -13,13 +13,13 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
-     docName="draft-ietf-rtgwg-yang-rib-extend-22" obsoletes="" updates=""
+     docName="draft-ietf-rtgwg-yang-rib-extend-23" obsoletes="" updates=""
      submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
      version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-22"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-23"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
       <organization>LabN Consulting LLC</organization>
       <address>
@@ -157,6 +157,18 @@ Datastore Architecture (NMDA) [RFC8342].</t>
               <td align="left">
                 <xref target="RFC6991" format="default"/></td>
             </tr>
+            <tr>
+              <td align="left">ospf</td>
+              <td align="left">ietf-ospf</td>
+              <td align="left">
+                <xref target="RFC9129" format="default"/></td>
+            </tr>
+            <tr>
+              <td align="left">isis</td>
+              <td align="left">ietf-isis</td>
+              <td align="left">
+                <xref target="RFC9130" format="default"/></td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -205,6 +217,10 @@ reachable static route.</t>
           /v6ur:next-hop-list/v6ur:next-hop-list/v6ur:next-hop:
     +--rw preference?   uint32
     +--rw tag?          uint32
+  augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route:
+    +--ro metric?            uint32
+    +--ro tag*               uint32
+    +--ro application-tag?   uint32
 ]]></artwork>
       </section>
       <section numbered="true" toc="default">
@@ -215,7 +231,6 @@ reachable static route.</t>
         <t>Each route next-hop in the RIB is augmented with a repair path,
         and is shown in the following tree snapshot.</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
-
   augment /rt:routing/rt:ribs/rt:rib/rt:routes/rt:route
           /rt:next-hop/rt:next-hop-options/rt:simple-next-hop:
     +--ro repair-path
@@ -240,8 +255,8 @@ reachable static route.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-06-06.yang" type="" markers="true"><![CDATA[
-module ietf-rib-extension {
+      <sourcecode name="ietf-rib-extension@2023-10-13.yang" type="" markers="true"><![CDATA[
+ module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
 
@@ -276,6 +291,16 @@ module ietf-rib-extension {
                          Management (NMDA Version)";
   }
 
+  import ietf-ospf {
+    prefix "ospf";
+    reference "RFC 9129: A YANG Data Model for the OSPF Protocol";
+  }
+
+  import ietf-isis {
+    prefix "isis";
+    reference "RFC 9130: A YANG Data Model for the IS-IS Protocol";
+  }
+
   organization
     "IETF RTGWG - Routing Working Group";
 
@@ -308,7 +333,7 @@ module ietf-rib-extension {
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-06-06 {
+  revision 2023-10-13 {
     description
       "Initial Version";
     reference
@@ -377,38 +402,6 @@ module ietf-rib-extension {
     }
   }
 
-  grouping attributes {
-    description
-      "Common attributes applicable to all routes.";
-    leaf metric {
-      type uint32;
-      description
-        "The metric is a numeric value indicating the cost
-         of the route from the perspective of the routing
-         protocol installing the route. In general, routes with
-         a lower metric installed by the same routing protocol
-         are lower cost to reach and are preferable to routes
-         with a higher metric. However, metrics from different
-         routing protocols are not comparable.";
-    }
-    leaf-list tag {
-      type uint32;
-      description
-        "A tag is a 32-bit opaque value associated with the
-         route that can be used for policy decisions such as
-         advertisement and filtering of the route.";
-    }
-    leaf application-tag {
-      type uint32;
-      description
-        "The application-specific tag is an additional tag that
-         can be used by applications that require semantics and/or
-         policy different from that of the tag. For example,
-         the tag is usually automatically advertised in OSPF
-         AS-External Link State Advertisements (LSAs) while this
-         application-specific tag is not advertised implicitly.";
-    }
-  }
   grouping repair-path {
     description
       "Grouping for IP Fast Reroute repair path.";
@@ -552,11 +545,61 @@ module ietf-rib-extension {
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
-    + "rt:routes/rt:route"
-  {
-    description
-      "Augment a route in RIB with attributes.";
-    uses attributes;
+    + "rt:routes/rt:route" {
+      description
+      "Augment a route in RIB with common attributes.";
+    leaf metric {
+      when "not(derived-from("
+        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
+        + "/rt:source-protocol, 'ospf:ospf')) "
+        + "and not(derived-from( "
+        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
+        + "/rt:source-protocol, 'isis:isis'))" {
+        description
+          "This augmentation is only valid for routes whose
+           source protocol is not OSPF or IS-IS since their YANG
+           models already include a 'metric' augmentation for
+           routes.";
+      }
+      type uint32;
+      description
+        "The metric is a numeric value indicating the cost
+         of the route from the perspective of the routing
+         protocol installing the route. In general, routes with
+         a lower metric installed by the same routing protocol
+         are lower cost to reach and are preferable to routes
+         with a higher metric. However, metrics from different
+         routing protocols are not comparable.";
+    }
+    leaf-list tag {
+      when "not(derived-from("
+        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
+        + "/rt:source-protocol, 'ospf:ospf')) "
+        + "and not(derived-from( "
+        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
+        + "/rt:source-protocol, 'isis:isis'))" {
+        description
+          "This augmentation is only valid for routes whose
+           source protocol is not OSPF or IS-IS since their YANG
+           models already include a 'tag' augmentation for
+           routes.";
+      }
+      type uint32;
+      description
+        "A tag is a 32-bit opaque value associated with the
+         route that can be used for policy decisions such as
+         advertisement and filtering of the route.";
+    }
+    leaf application-tag {
+      type uint32;
+      description
+        "The application-specific tag is an additional tag that
+         can be used by applications that require semantics and/or
+         policy different from that of the tag. For example,
+         the tag is usually automatically advertised in OSPF
+         AS-External Link State Advertisements (LSAs) while this
+         application-specific tag is not advertised implicitly.";
+    }
   }
 
   augment "/rt:routing/rt:ribs/rt:rib/"
@@ -876,6 +919,58 @@ module ietf-rib-extension {
           <seriesInfo name="RFC" value="8792"/>
           <seriesInfo name="DOI" value="10.17487/RFC8792"/>
         </reference>
+        <reference anchor="RFC9129" target="https://www.rfc-editor.org/info/rfc9129" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9129.xml">
+        <front>
+          <title>YANG Data Model for the OSPF Protocol</title>
+          <author fullname="Derek Yeung">
+            <organization>Arrcus, Inc.</organization>
+          </author>
+          <author fullname="Yingzhen Qu" initials="Y." surname="Qu">
+            <organization>Futurewei</organization>
+          </author>
+          <author fullname="Jeffrey Zhang">
+            <organization>Juniper Networks</organization>
+          </author>
+          <author fullname="Ing-Wher Chen">
+            <organization>The MITRE Corporation</organization>
+          </author>
+          <author fullname="Acee Lindem">
+            <organization>Cisco Systems</organization>
+          </author>
+          <date month="October" year="2022"/>
+          <abstract>
+            <t>This document defines a YANG data model that can be used to configure and manage the IS-IS protocol on network elements.</t>
+          </abstract>
+        </front>
+          <seriesInfo name="RFC" value="9129"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9129"/>
+        </reference>
+        <reference anchor="RFC9130" target="https://www.rfc-editor.org/info/rfc9130" xml:base="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9130.xml">
+        <front>
+          <title>YANG Data Model for IS-IS Protocol</title>
+          <author fullname="Stephane Litkowski">
+            <organization>Cisco Systems</organization>
+          </author>
+          <author fullname="Derek Yeung">
+            <organization>Arrcus, Inc</organization>
+          </author>
+          <author fullname="Acee Lindem">
+            <organization>Cisco Systems</organization>
+          </author>
+          <author fullname="Jeffrey Zhang">
+            <organization>Juniper Networks</organization>
+          </author>
+          <author fullname="Ladislav Lhotka">
+            <organization>CZ.NIC</organization>
+          </author>
+          <date month="October" year="2022"/>
+          <abstract>
+            <t>This document defines a YANG data model that can be used to configure and manage the IS-IS protocol on network elements.</t>
+          </abstract>
+        </front>
+          <seriesInfo name="RFC" value="9130"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9130"/>
+       </reference>
       </references>
     </references>
     <section anchor="full-tree" numbered="true" toc="default">
