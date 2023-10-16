@@ -13,13 +13,13 @@
 <?rfc rfcedstyle="yes" ?>
 <?rfc subcompact="no" ?>
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr="trust200902"
-     docName="draft-ietf-rtgwg-yang-rib-extend-23" obsoletes="" updates=""
+     docName="draft-ietf-rtgwg-yang-rib-extend-24" obsoletes="" updates=""
      submissionType="IETF" xml:lang="en" tocInclude="true" symRefs="true" sortRefs="true"
      version="3" consensus="true">
   <!-- xml2rfc v2v3 conversion 3.17.1 -->
   <front>
     <title abbrev="YANG RIB-EXT">RIB Extension YANG Data Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-23"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-rtgwg-yang-rib-extend-24"/>
     <author initials="A." surname="Lindem" fullname="Acee Lindem">
       <organization>LabN Consulting LLC</organization>
       <address>
@@ -255,7 +255,7 @@ reachable static route.</t>
     </section>
     <section numbered="true" toc="default">
       <name>RIB Extension YANG Model</name>
-      <sourcecode name="ietf-rib-extension@2023-10-13.yang" type="" markers="true"><![CDATA[
+      <sourcecode name="ietf-rib-extension@2023-10-16.yang" type="" markers="true"><![CDATA[
  module ietf-rib-extension {
   yang-version "1.1";
   namespace "urn:ietf:params:xml:ns:yang:ietf-rib-extension";
@@ -333,7 +333,7 @@ reachable static route.</t>
      This version of this YANG module is part of RFC XXXX;
      see the RFC itself for full legal notices.";
 
-  revision 2023-10-13 {
+  revision 2023-10-16 {
     description
       "Initial Version";
     reference
@@ -550,11 +550,9 @@ reachable static route.</t>
       "Augment a route in RIB with common attributes.";
     leaf metric {
       when "not(derived-from("
-        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
-        + "/rt:source-protocol, 'ospf:ospf')) "
+        + "../rt:source-protocol, 'ospf:ospf')) "
         + "and not(derived-from( "
-        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
-        + "/rt:source-protocol, 'isis:isis'))" {
+        + "../rt:source-protocol, 'isis:isis'))" {
         description
           "This augmentation is only valid for routes whose
            source protocol is not OSPF or IS-IS since their YANG
@@ -573,11 +571,9 @@ reachable static route.</t>
     }
     leaf-list tag {
       when "not(derived-from("
-        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
-        + "/rt:source-protocol, 'ospf:ospf')) "
+        + "../rt:source-protocol, 'ospf:ospf')) "
         + "and not(derived-from( "
-        + "/rt:routing/rt:ribs/rt:rib/rt:routes/rt:route"
-        + "/rt:source-protocol, 'isis:isis'))" {
+        + "../rt:source-protocol, 'isis:isis'))" {
         description
           "This augmentation is only valid for routes whose
            source protocol is not OSPF or IS-IS since their YANG
@@ -620,7 +616,6 @@ reachable static route.</t>
     uses repair-path;
   }
 }
-
       ]]></sourcecode>
     </section>
     <section numbered="true" toc="default">
